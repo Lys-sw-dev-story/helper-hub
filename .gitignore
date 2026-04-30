@@ -1,0 +1,19 @@
+# 환경변수 파일
+.env
+.env.local
+
+# Python/uv 관련
+__pycache__/
+.venv/
+.python-version
+backend/.env
+
+# Node/React 관련
+node_modules/
+frontend/dist/
+frontend/npm-debug.log*
+
+# IDE/OS 설정
+.vscode/
+.idea/
+.DS_Store
