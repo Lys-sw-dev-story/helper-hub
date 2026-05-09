@@ -9,7 +9,7 @@ from app.schemas.auth_schema import LoginRequest, StaffMe, TokenResponse
 from app.services.auth_service import authenticate_staff
 
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter()
 
 
 @router.post("/login", response_model=TokenResponse)
