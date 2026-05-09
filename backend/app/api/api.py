@@ -4,4 +4,4 @@ from app.api.routers import client, assistant, auth
 api_router = APIRouter()
 api_router.include_router(client.router, prefix="/clients", tags=["Clients"])
 api_router.include_router(assistant.router, prefix="/assistants", tags=["Assistants"])
-api_router.include_router(auth.router, perfix="/auth", tags=["auth"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
