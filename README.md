@@ -35,3 +35,6 @@ uv run uvicorn app.main:app --reload
 cd frontend
 npm install
 npm run dev
+
+### 4. 서버 접속
+http://localhost:5173/

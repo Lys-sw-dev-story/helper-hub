@@ -13,9 +13,9 @@ const AssistantList: React.FC = () => {
   return (
     <div className="assistant-list-container">
       <div className="list-header">
-        <h2>🤝 조력자 관리 목록</h2>
+        <h2>🤝 활동지원사 관리 목록</h2>
         <Link to="/assistants/register">
-          <button className="register-btn">+ 신규 조력자</button>
+          <button className="register-btn">+ 신규 활동지원사</button>
         </Link>
       </div>
       <table className="assistant-table">

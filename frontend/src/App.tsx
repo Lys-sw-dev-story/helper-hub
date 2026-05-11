@@ -10,7 +10,7 @@ function App() {
     <Router>
       <nav style={{ padding: '1rem', background: '#333', color: 'white', display: 'flex', gap: '1rem' }}>
         <Link to="/clients" style={{ color: 'white', textDecoration: 'none' }}>이용자 관리</Link>
-        <Link to="/assistants" style={{ color: 'white', textDecoration: 'none' }}>조력자 관리</Link>
+        <Link to="/assistants" style={{ color: 'white', textDecoration: 'none' }}>활동지원사 관리</Link>
         <Link to="/login" style={{ color: 'gray', textDecoration: 'none', marginLeft: 'auto' }}>로그아웃</Link>
       </nav>
 
