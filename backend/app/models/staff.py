@@ -11,7 +11,5 @@ class Staff(Base):
     staff_name = Column(String(100), nullable=False)
     staff_role = Column(String(50))
     organization_id = Column(BigInteger, ForeignKey("organization.organization_id"))
-
-    # Relationships
     organization = relationship("Organization", back_populates="staffs")
     assignments = relationship("Assignment", back_populates="staff")

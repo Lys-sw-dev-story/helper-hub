@@ -11,6 +11,4 @@ class ServiceLog(Base):
     service_hours = Column(Numeric(5, 2), nullable=False)
     service_content = Column(Text)
     assignment_id = Column(BigInteger, ForeignKey("assignment.assignment_id"), nullable=False)
-
-    # Relationships
     assignment = relationship("Assignment", back_populates="service_logs")

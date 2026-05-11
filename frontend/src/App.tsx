@@ -8,7 +8,6 @@ import AssistantRegister from './pages/Assistant/AssistantRegister';
 function App() {
   return (
     <Router>
-      {/* 간단한 네비게이션 (로그인 후에만 보이게 할 수도 있지만 일단 상단에 배치!) */}
       <nav style={{ padding: '1rem', background: '#333', color: 'white', display: 'flex', gap: '1rem' }}>
         <Link to="/clients" style={{ color: 'white', textDecoration: 'none' }}>이용자 관리</Link>
         <Link to="/assistants" style={{ color: 'white', textDecoration: 'none' }}>조력자 관리</Link>

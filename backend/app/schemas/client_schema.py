@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date
 
-class ClientCreate(BaseModel): # 고객 추가
+class ClientCreate(BaseModel):
     client_name: str
     client_birth_date: Optional[date] = None
     client_phone: Optional[str] = None

@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import engine, Base
 from app.api.api import api_router
 
-# 중요!!: Base.metadata가 인지할 수 있도록 모든 모델을 여기서 import 해야 함
 from app.models import (
     organization, staff, client, assistant,
     assignment, service_log, document, document_requirement

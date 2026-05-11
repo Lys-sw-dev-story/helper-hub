@@ -1,0 +1,59 @@
+.register-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  background-color: var(--bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.input-group label {
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.form-input {
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.form-input:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
+}
+
+.submit-btn {
+  padding: 1rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: opacity 0.3s;
+}
+
+.submit-btn:hover {
+  opacity: 0.85;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/authApi';
-import './LoginPage.css'; // 스타일은 아래 3번에서 만들자!
+import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,6 @@ const LoginPage: React.FC = () => {
       const data = await login(email, password);
       console.log('로그인 성공:', data);
       
-      // 로그인 성공 시 메인 화면(이용자 목록 등)으로 이동
       navigate('/clients'); 
     } catch (err: any) {
       console.error(err);

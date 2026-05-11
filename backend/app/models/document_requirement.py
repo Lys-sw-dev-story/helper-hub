@@ -6,7 +6,7 @@ class DocumentRequirement(Base):
     __tablename__ = "document_requirement"
 
     requirement_id = Column(BigInteger, primary_key=True, autoincrement=True)
-    target_type = Column(String(20), nullable=False)  # 예: 'client', 'assistant'
+    target_type = Column(String(20), nullable=False)
     document_name = Column(String(100), nullable=False)
     valid_period_years = Column(Integer)
 

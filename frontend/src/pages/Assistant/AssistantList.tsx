@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAssistants } from '../../api/assistantApi';
+import './AssistantList.css';
 
 const AssistantList: React.FC = () => {
   const [assistants, setAssistants] = useState<any[]>([]);
@@ -10,17 +11,17 @@ const AssistantList: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="assistant-list-container">
+      <div className="list-header">
         <h2>🤝 조력자 관리 목록</h2>
         <Link to="/assistants/register">
-          <button style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>+ 신규 조력자</button>
+          <button className="register-btn">+ 신규 조력자</button>
         </Link>
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+      <table className="assistant-table">
         <thead>
-          <tr style={{ borderBottom: '2px solid #333', textAlign: 'left' }}>
-            <th style={{ padding: '10px' }}>성함</th>
+          <tr>
+            <th>성함</th>
             <th>연락처</th>
             <th>근무 가능 요일</th>
             <th>업무 시작일</th>
@@ -29,7 +30,7 @@ const AssistantList: React.FC = () => {
         </thead>
         <tbody>
           {assistants.map((ast) => (
-            <tr key={ast.assistant_id} style={{ borderBottom: '1px solid #ddd' }}>
+            <tr key={ast.assistant_id}>
               <td style={{ padding: '10px' }}>{ast.assistant_name}</td>
               <td>{ast.assistant_phone || '-'}</td>
               <td>{ast.work_days || '-'}</td>

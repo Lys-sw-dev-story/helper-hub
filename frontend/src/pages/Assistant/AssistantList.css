@@ -1,0 +1,44 @@
+.assistant-list-container {
+  padding: 2rem;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.register-btn {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-h);
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.assistant-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.assistant-table thead tr {
+  border-bottom: 2px solid var(--text-h);
+  text-align: left;
+}
+
+.assistant-table th, .assistant-table td {
+  padding: 12px 10px;
+}
+
+.assistant-table tbody tr {
+  border-bottom: 1px solid var(--border);
+}

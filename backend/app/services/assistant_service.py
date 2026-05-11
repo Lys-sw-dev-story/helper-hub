@@ -3,7 +3,6 @@ from app.models.assistant import Assistant
 from app.schemas.assistant_schema import AssistantCreate
 
 def create_assistant(db: Session, assistant_in: AssistantCreate):
-    # 스키마 데이터를 언패킹해서 모델 생성
     db_assistant = Assistant(**assistant_in.model_dump())
     db.add(db_assistant)
     db.commit()
@@ -11,5 +10,4 @@ def create_assistant(db: Session, assistant_in: AssistantCreate):
     return db_assistant
 
 def get_all_assistants(db: Session):
-    # Assistant 모델의 모든 데이터를 가져오는 쿼리
     return db.query(Assistant).all()
