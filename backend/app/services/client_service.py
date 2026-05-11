@@ -8,3 +8,6 @@ def create_client(db: Session, client_in: ClientCreate): #고객추가
     db.commit()
     db.refresh(db_client)
     return db_client
+
+def get_all_clients(db: Session):
+    return db.query(Client).all()

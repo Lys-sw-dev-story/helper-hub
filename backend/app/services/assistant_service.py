@@ -9,3 +9,7 @@ def create_assistant(db: Session, assistant_in: AssistantCreate):
     db.commit()
     db.refresh(db_assistant)
     return db_assistant
+
+def get_all_assistants(db: Session):
+    # Assistant 모델의 모든 데이터를 가져오는 쿼리
+    return db.query(Assistant).all()
