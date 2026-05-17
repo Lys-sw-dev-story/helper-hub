@@ -7,6 +7,8 @@ const AssistantList: React.FC = () => {
   const [assistants, setAssistants] = useState<AssistantDetail[]>([]);
   const navigate = useNavigate();
 
+  const orgName = localStorage.getItem('organization_name');
+
   useEffect(() => {
     getAssistants().then(setAssistants).catch(console.error);
   }, []);
@@ -25,7 +27,7 @@ const AssistantList: React.FC = () => {
           <tr>
             <th>성함</th>
             <th>소속 기관</th>
-            <th style={{ textAlign: 'right' }}>Align 수정완료</th>
+            <th style={{ textAlign: 'right' }}>관리</th>
           </tr>
         </thead>
         <tbody>
@@ -39,9 +41,9 @@ const AssistantList: React.FC = () => {
             assistants.map((ast) => (
               <tr key={ast.assistant_id}>
                 <td style={{ fontWeight: '600' }}>{ast.assistant_name}</td>
-                <td>소속 복지관</td>
+                <td>{orgName}</td>
                 <td style={{ textAlign: 'right' }}>
-                  <button className="btn btn-primary" onClick={() => navigate(`/${ast.assistant_id}`)}>
+                  <button className="btn btn-primary" onClick={() => navigate(`/assistants/${ast.assistant_id}`)}>
                     자세히 보기 🔍
                   </button>
                 </td>

@@ -9,19 +9,22 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    try {
-      await login(email, password);
-      navigate('/clients'); 
-    } catch (err: any) {
-      console.error(err);
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
-    }
-  };
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  try {
+    const response = await login(email, password);
+    const myOrgName = response?.organization_name;
+    localStorage.setItem('organization_name', myOrgName);
 
-  return (
+    navigate('/clients'); 
+  } catch (err: any) {
+    console.error(err);
+    setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+  }
+};
+
+return (
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
