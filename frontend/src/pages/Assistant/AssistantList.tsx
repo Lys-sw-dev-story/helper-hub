@@ -17,7 +17,7 @@ const AssistantList: React.FC = () => {
     <div className="assistant-card">
       <div className="page-header">
         <h2>🤝 활동지원사 관리 목록</h2>
-        <Link to="/register">
+        <Link to="/assistants/register">
           <button className="btn btn-primary">+ 신규 등록</button>
         </Link>
       </div>

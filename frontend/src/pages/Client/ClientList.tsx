@@ -17,7 +17,7 @@ const ClientList: React.FC = () => {
     <div className="client-card">
       <div className="page-header">
         <h2>👵 이용자 관리 목록</h2>
-        <Link to="/register">
+        <Link to="/clients/register">
           <button className="btn btn-primary">+ 신규 등록</button>
         </Link>
       </div>
