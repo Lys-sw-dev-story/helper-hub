@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/authApi';
-import './LoginPage.css';
+import './LoginPage.css'; 
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,11 +12,8 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     try {
-      const data = await login(email, password);
-      console.log('로그인 성공:', data);
-      
+      await login(email, password);
       navigate('/clients'); 
     } catch (err: any) {
       console.error(err);
@@ -25,32 +22,41 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Helper-Hub 로그인</h2>
-        <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <label>이메일</label>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Helper-Hub</h2>
+          <p>사회복지사 시스템에 로그인하세요.</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="auth-form">
+          <div className="auth-group">
+            <label>이메일 계정</label>
             <input 
               type="email" 
+              className="auth-input"
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               placeholder="admin@example.com"
               required 
             />
           </div>
-          <div className="input-group">
+          
+          <div className="auth-group">
             <label>비밀번호</label>
             <input 
               type="password" 
+              className="auth-input"
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
-              placeholder="admin1234"
+              placeholder="••••••••"
               required 
             />
           </div>
-          {error && <p className="error-msg">{error}</p>}
-          <button type="submit" className="login-btn">로그인</button>
+
+          {error && <div className="auth-error">⚠️ {error}</div>}
+          
+          <button type="submit" className="auth-btn">로그인</button>
         </form>
       </div>
     </div>
