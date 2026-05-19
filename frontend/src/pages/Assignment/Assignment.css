@@ -1,0 +1,204 @@
+.assignment-container, .assignment-detail-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.assignment-card, .detail-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.filter-tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text-sub);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.filter-tab.active {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.assignment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assignment-table th, .assignment-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background-color: #f8f9fa; }
+
+.status-tag {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.status-tag.active { background-color: #e3faf2; color: #0ca678; }
+.status-tag.ended { background-color: #ffe3e3; color: #f03e3e; }
+
+/* 상세 페이지 스킨 */
+.detail-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-content-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-info-block h3 {
+  font-size: 1rem;
+  color: var(--text-sub);
+  margin-bottom: 0.5rem;
+}
+
+.text-active { color: #0ca678; font-weight: 500; }
+.loading-box { text-align: center; margin-top: 5rem; color: var(--text-sub); }
+
+.detail-actions-zone {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.end-inline-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.end-inline-form input[type="date"] {
+  padding: 0.4rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+/* 이름 강조용 추가 스타일 */
+.assistant-name-cell {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.flex-row-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.flex-row-status h3 { margin: 0; }
+
+.detail-info-cards-container {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.info-sub-card {
+  flex: 1;
+  background: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  position: relative;
+}
+
+.card-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.client-label { background: #e8f2ff; color: var(--primary-color); }
+.assistant-label { background: #eef3f6; color: #495057; }
+
+.card-main-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0.75rem 0 0.25rem 0;
+}
+
+.card-sub-id {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  margin: 0;
+}
+
+.card-sub-id code {
+  background: #e9ecef;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.spec-info-zone {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.spec-table p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  border-bottom: 1px dashed #f1f3f5;
+  padding-bottom: 0.5rem;
+}
+.spec-table p:last-child { border: none; }
+
+.link-card {
+  text-decoration: none; 
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.link-card:hover {
+  transform: translateY(-4px); 
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  background-color: #fff;
+}
+
+.card-click-hint {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.link-card:hover .card-click-hint {
+  color: var(--primary-color);
+  font-weight: 500;
+}
