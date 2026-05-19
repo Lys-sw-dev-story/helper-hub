@@ -15,6 +15,6 @@ class DocumentStatus(StrEnum):
 
 
 class DocumentTargetType(StrEnum):
-    ORG = "ORG"
-    CLIENT = "CLIENT"
-    WORKER = "WORKER"
+    ORGANIZATION = "organization"
+    CLIENT = "client"
+    ASSISTANT = "assistant"

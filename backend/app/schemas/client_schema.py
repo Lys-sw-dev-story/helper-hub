@@ -17,3 +17,15 @@ class ClientResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ClientMemoUpdate(BaseModel):
+    client_memo: Optional[str] = None
+
+
+class ClientMemoResponse(BaseModel):
+    client_id: int
+    client_memo: Optional[str] = None
+
+    class Config:
+        from_attributes = True
