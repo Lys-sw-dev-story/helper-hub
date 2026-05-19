@@ -17,3 +17,6 @@ frontend/npm-debug.log*
 .vscode/
 .idea/
 .DS_Store
+
+# 업로드 파일 (개인정보 포함 가능 — 커밋 금지)
+backend/uploads/
