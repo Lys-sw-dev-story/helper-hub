@@ -45,3 +45,15 @@ class AssistantDetail(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AssistantMemoUpdate(BaseModel):
+    assistant_memo: Optional[str] = None
+
+
+class AssistantMemoResponse(BaseModel):
+    assistant_id: int
+    assistant_memo: Optional[str] = None
+
+    class Config:
+        from_attributes = True

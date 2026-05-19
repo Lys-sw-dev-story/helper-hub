@@ -7,6 +7,8 @@ from app.models.staff import Staff
 from app.schemas.client_schema import (
     ClientCreate,
     ClientDetail,
+    ClientMemoResponse,
+    ClientMemoUpdate,
     ClientResponse,
     ClientUpdate,
 )
@@ -80,3 +82,18 @@ def delete_client(
             detail="해당 이용자를 찾을 수 없습니다.",
         )
     return None
+
+
+@router.patch("/{client_id}/memo", response_model=ClientMemoResponse)
+def update_client_memo(
+    client_id: int,
+    payload: ClientMemoUpdate,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return client_service.update_client_memo(
+        db=db,
+        organization_id=current_staff.organization_id,
+        client_id=client_id,
+        payload=payload,
+    )

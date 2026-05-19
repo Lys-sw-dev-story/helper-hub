@@ -40,3 +40,15 @@ class ClientDetail(BaseModel):  # 조회 응답 (전체 필드)
 
     class Config:
         from_attributes = True
+
+
+class ClientMemoUpdate(BaseModel):
+    client_memo: Optional[str] = None
+
+
+class ClientMemoResponse(BaseModel):
+    client_id: int
+    client_memo: Optional[str] = None
+
+    class Config:
+        from_attributes = True

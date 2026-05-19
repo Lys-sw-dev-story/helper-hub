@@ -1,7 +1,12 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.assistant import Assistant
-from app.schemas.assistant_schema import AssistantCreate, AssistantUpdate
+from app.schemas.assistant_schema import (
+    AssistantCreate,
+    AssistantMemoUpdate,
+    AssistantUpdate,
+)
 
 
 def create_assistant(
@@ -63,3 +68,28 @@ def delete_assistant(db: Session, assistant_id: int, organization_id: int) -> bo
     db.delete(db_assistant)
     db.commit()
     return True
+
+
+def update_assistant_memo(
+    db: Session,
+    organization_id: int,
+    assistant_id: int,
+    payload: AssistantMemoUpdate,
+) -> Assistant:
+    assistant = (
+        db.query(Assistant)
+        .filter(
+            Assistant.assistant_id == assistant_id,
+            Assistant.organization_id == organization_id,
+        )
+        .one_or_none()
+    )
+    if assistant is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="활동지원사를 찾을 수 없습니다.",
+        )
+    assistant.assistant_memo = payload.assistant_memo
+    db.commit()
+    db.refresh(assistant)
+    return assistant
