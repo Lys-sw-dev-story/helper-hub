@@ -1,43 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getAssistants } from '../../api/assistantApi';
-import './AssistantList.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAssistants, type AssistantDetail } from '../../api/assistantApi';
+import './Assistant.css';
 
 const AssistantList: React.FC = () => {
-  const [assistants, setAssistants] = useState<any[]>([]);
+  const [assistants, setAssistants] = useState<AssistantDetail[]>([]);
+  const navigate = useNavigate();
+
+  const orgName = localStorage.getItem('organization_name');
 
   useEffect(() => {
     getAssistants().then(setAssistants).catch(console.error);
   }, []);
 
   return (
-    <div className="assistant-list-container">
-      <div className="list-header">
+    <div className="assistant-card">
+      <div className="page-header">
         <h2>🤝 활동지원사 관리 목록</h2>
         <Link to="/assistants/register">
-          <button className="register-btn">+ 신규 활동지원사</button>
+          <button className="btn btn-primary">+ 신규 등록</button>
         </Link>
       </div>
+      
       <table className="assistant-table">
         <thead>
           <tr>
             <th>성함</th>
-            <th>연락처</th>
-            <th>근무 가능 요일</th>
-            <th>업무 시작일</th>
-            <th>자격증</th>
+            <th>소속 기관</th>
+            <th style={{ textAlign: 'right' }}>관리</th>
           </tr>
         </thead>
         <tbody>
-          {assistants.map((ast) => (
-            <tr key={ast.assistant_id}>
-              <td style={{ padding: '10px' }}>{ast.assistant_name}</td>
-              <td>{ast.assistant_phone || '-'}</td>
-              <td>{ast.work_days || '-'}</td>
-              <td>{ast.work_start_date || '-'}</td>
-              <td>{ast.assistant_license || '-'}</td>
+          {assistants.length === 0 ? (
+            <tr>
+              <td colSpan={3} style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                등록된 활동지원사가 없습니다.
+              </td>
             </tr>
-          ))}
+          ) : (
+            assistants.map((ast) => (
+              <tr key={ast.assistant_id}>
+                <td style={{ fontWeight: '600' }}>{ast.assistant_name}</td>
+                <td>{orgName}</td>
+                <td style={{ textAlign: 'right' }}>
+                  <button className="btn btn-primary" onClick={() => navigate(`/assistants/${ast.assistant_id}`)}>
+                    자세히 보기 🔍
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

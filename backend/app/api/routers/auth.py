@@ -31,7 +31,10 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse
         subject=staff.staff_id,
         organization_id=staff.organization_id,
     )
-    return TokenResponse(access_token=token)
+    return TokenResponse(
+        access_token=token,
+        organization_name=staff.organization.organization_name
+    )
 
 
 @router.get("/me", response_model=StaffMe)
