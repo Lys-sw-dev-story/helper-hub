@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/authApi';
-import './LoginPage.css'; 
+import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('admin1234');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  try {
-    const response = await login(email, password);
-    const myOrgName = response?.organization_name;
-    localStorage.setItem('organization_name', myOrgName);
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
 
-    navigate('/clients'); 
-  } catch (err: any) {
-    console.error(err);
-    setError('이메일 또는 비밀번호가 올바르지 않습니다.');
-  }
-};
+    try {
+      const response = await login({ email, password });
 
-return (
+      localStorage.setItem('access_token', response.access_token);
+      localStorage.setItem('token_type', response.token_type);
+
+      navigate('/clients');
+    } catch (err) {
+      console.error(err);
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+    }
+  };
+
+  return (
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
@@ -34,47 +36,36 @@ return (
 
         <form onSubmit={handleLogin} className="auth-form">
           <div className="auth-group">
-            <label>이메일 계정</label>
-            <input 
-              type="email" 
+            <label htmlFor="email">이메일 계정</label>
+            <input
+              id="email"
+              type="email"
               className="auth-input"
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@example.com"
-              required 
+              required
             />
           </div>
-<<<<<<< HEAD
-          <div className="input-group">
-            <label>비밀번호</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              placeholder="admin1234"
-              required 
-            />
-          </div>
-          {error && <p className="error-msg">{error}</p>}
-          <button type="submit" className="login-btn">로그인</button>
-=======
-          
+
           <div className="auth-group">
-            <label>비밀번호</label>
-            <input 
-              type="password" 
+            <label htmlFor="password">비밀번호</label>
+            <input
+              id="password"
+              type="password"
               className="auth-input"
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              placeholder="••••••••"
-              required 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="admin1234"
+              required
             />
           </div>
 
           {error && <div className="auth-error">⚠️ {error}</div>}
-          
-          <button type="submit" className="auth-btn">로그인</button>
->>>>>>> 2week
+
+          <button type="submit" className="auth-btn">
+            로그인
+          </button>
         </form>
       </div>
     </div>

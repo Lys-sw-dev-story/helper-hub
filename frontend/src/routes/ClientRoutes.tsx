@@ -1,9 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ClientList from './ClientList';
-import ClientRegister from './ClientRegister';
-import ClientDetail from './ClientDetail';
-import ClientEdit from './ClientEdit';
+import ClientList from "../pages/Client/ClientList";
+import ClientRegister from "../pages/Client/ClientRegister";
+import ClientDetail from "../pages/Client/ClientDetail";
+import ClientEdit from "../pages/Client/ClientEdit";
 
 const ClientRoutes: React.FC = () => {
   return (

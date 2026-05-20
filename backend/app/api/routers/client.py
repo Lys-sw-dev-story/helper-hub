@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_staff
 from app.core.database import get_db
 from app.models.staff import Staff
+from app.models.client import Client
 from app.schemas.client_schema import (
     ClientCreate,
     ClientMemoResponse,
@@ -14,7 +15,35 @@ from app.services import client_service
 
 router = APIRouter()
 
-@router.post("/", response_model=ClientResponse) # 고객추가
+
+@router.get("/")
+def read_clients(
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    clients = (
+        db.query(Client)
+        .filter(Client.organization_id == current_staff.organization_id)
+        .order_by(Client.client_id.desc())
+        .all()
+    )
+
+    return [
+        {
+            "client_id": client.client_id,
+            "client_name": client.client_name,
+            "client_birth_date": client.client_birth_date,
+            "client_phone": client.client_phone,
+            "client_address": client.client_address,
+            "client_status": client.client_status,
+            "client_memo": client.client_memo,
+            "organization_id": client.organization_id,
+        }
+        for client in clients
+    ]
+
+
+@router.post("/", response_model=ClientResponse)
 def register_client(client_in: ClientCreate, db: Session = Depends(get_db)):
     return client_service.create_client(db, client_in)
 
