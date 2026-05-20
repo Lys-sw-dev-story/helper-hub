@@ -4,9 +4,9 @@ import { getAssistant, updateAssistant, type AssistantData } from '../../api/ass
 import './Assistant.css';
 
 const AssistantEdit: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { assistantId: assistantIdParam } = useParams<{ assistantId: string }>();
   const navigate = useNavigate();
-  const assistantId = Number(id);
+  const assistantId = Number(assistantIdParam);
 
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<AssistantData>({

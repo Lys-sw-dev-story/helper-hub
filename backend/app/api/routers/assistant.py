@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_staff
@@ -7,7 +7,9 @@ from app.models.staff import Staff
 from app.models.assistant import Assistant
 from app.schemas.assistant_schema import (
     AssistantCreate,
+    AssistantDetailResponse,
     AssistantResponse,
+    AssistantUpdate,
 )
 from app.services import assistant_service
 
@@ -47,3 +49,38 @@ def register_assistant(
     db: Session = Depends(get_db),
 ):
     return assistant_service.create_assistant(db, assistant_in)
+
+
+@router.get("/{assistant_id}", response_model=AssistantDetailResponse)
+def read_assistant(
+    assistant_id: int,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return assistant_service.get_assistant(
+        db, assistant_id, current_staff.organization_id
+    )
+
+
+@router.patch("/{assistant_id}", response_model=AssistantDetailResponse)
+def update_assistant(
+    assistant_id: int,
+    payload: AssistantUpdate,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return assistant_service.update_assistant(
+        db, assistant_id, current_staff.organization_id, payload
+    )
+
+
+@router.delete("/{assistant_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_assistant(
+    assistant_id: int,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    assistant_service.delete_assistant(
+        db, assistant_id, current_staff.organization_id
+    )
+    return None

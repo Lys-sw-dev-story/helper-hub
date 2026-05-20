@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { getClient, deleteClient, type ClientData } from '../../api/clientApi';
 import './Client.css';
 
@@ -20,7 +21,8 @@ const ClientDetail: React.FC = () => {
         })
         .catch((err) => {
           console.error(err);
-          alert('데이터를 가져오지 못했습니다.');
+          const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+          alert(typeof detail === 'string' ? detail : '데이터를 가져오지 못했습니다.');
           navigate('/clients');
         });
     }
@@ -34,7 +36,8 @@ const ClientDetail: React.FC = () => {
         navigate('/clients');
       } catch (err) {
         console.error(err);
-        alert('삭제에 실패했습니다.');
+        const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+        alert(typeof detail === 'string' ? detail : '삭제에 실패했습니다.');
       }
     }
   };

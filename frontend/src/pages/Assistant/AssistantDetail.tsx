@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { getAssistant, deleteAssistant, type AssistantData } from '../../api/assistantApi';
 import './Assistant.css';
 
 const AssistantDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { assistantId: assistantIdParam } = useParams<{ assistantId: string }>();
   const navigate = useNavigate();
-  const assistantId = Number(id);
+  const assistantId = Number(assistantIdParam);
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<AssistantData | null>(null);
@@ -20,7 +21,8 @@ const AssistantDetail: React.FC = () => {
         })
         .catch((err) => {
           console.error(err);
-          alert('데이터를 가져오지 못했습니다.');
+          const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+          alert(typeof detail === 'string' ? detail : '데이터를 가져오지 못했습니다.');
           navigate('/assistants');
         });
     }
@@ -34,7 +36,8 @@ const AssistantDetail: React.FC = () => {
         navigate('/assistants');
       } catch (err) {
         console.error(err);
-        alert('삭제에 실패했습니다.');
+        const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+        alert(typeof detail === 'string' ? detail : '삭제에 실패했습니다.');
       }
     }
   };

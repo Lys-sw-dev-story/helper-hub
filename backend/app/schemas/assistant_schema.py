@@ -22,6 +22,29 @@ class AssistantResponse(BaseModel):
         from_attributes = True
 
 
+class AssistantDetailResponse(BaseModel):
+    assistant_id: int
+    assistant_name: str
+    assistant_phone: Optional[str] = None
+    work_days: Optional[str] = None
+    work_start_date: Optional[date] = None
+    assistant_license: Optional[str] = None
+    assistant_memo: Optional[str] = None
+    organization_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class AssistantUpdate(BaseModel):
+    assistant_name: Optional[str] = None
+    assistant_phone: Optional[str] = None
+    work_days: Optional[str] = None
+    work_start_date: Optional[date] = None
+    assistant_license: Optional[str] = None
+    assistant_memo: Optional[str] = None
+
+
 class AssistantMemoUpdate(BaseModel):
     assistant_memo: Optional[str] = None
 
