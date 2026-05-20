@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import { getAssignmentById, endAssignment, type Assignment } from '../../api/assignmentApi';
 import './Assignment.css';
 
@@ -37,7 +38,8 @@ const AssignmentDetail: React.FC = () => {
       setAssignment(updated);
     } catch (err) {
       console.error(err);
-      alert('종료 처리 중 서버 오류가 발생했습니다.');
+      const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+      alert(typeof detail === 'string' ? detail : '종료 처리 중 서버 오류가 발생했습니다.');
     }
   };
 

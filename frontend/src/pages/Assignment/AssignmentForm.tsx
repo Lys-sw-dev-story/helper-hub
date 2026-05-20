@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { createAssignment } from '../../api/assignmentApi';
 import './Assignment.css';
 
@@ -30,7 +31,8 @@ const AssignmentForm: React.FC = () => {
       navigate('/assignments');
     } catch (err) {
       console.error(err);
-      alert('등록 실패: 서버 에러 또는 유효하지 않은 FK 데이터입니다.');
+      const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
+      alert(typeof detail === 'string' ? detail : '등록 실패: 서버 에러 또는 유효하지 않은 FK 데이터입니다.');
     }
   };
 
