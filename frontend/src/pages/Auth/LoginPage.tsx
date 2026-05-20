@@ -44,20 +44,6 @@ return (
               required 
             />
           </div>
-<<<<<<< HEAD
-          <div className="input-group">
-            <label>비밀번호</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              placeholder="admin1234"
-              required 
-            />
-          </div>
-          {error && <p className="error-msg">{error}</p>}
-          <button type="submit" className="login-btn">로그인</button>
-=======
           
           <div className="auth-group">
             <label>비밀번호</label>
@@ -74,7 +60,6 @@ return (
           {error && <div className="auth-error">⚠️ {error}</div>}
           
           <button type="submit" className="auth-btn">로그인</button>
->>>>>>> 2week
         </form>
       </div>
     </div>

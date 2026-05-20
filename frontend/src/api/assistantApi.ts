@@ -32,11 +32,6 @@ export const registerAssistant = async (data: AssistantData) => {
   return response.data;
 };
 
-<<<<<<< HEAD
-export const getAssistants = async () => {
-  const response = await axiosInstance.get('/assistants');
-  return response.data;
-=======
 // 4. 활동지원사 정보 수정 (PATCH /assistants/{id})
 export const updateAssistant = async (id: number, data: Partial<AssistantData>) => {
   const response = await axiosInstance.patch(`/assistants/${id}`, data);
@@ -46,5 +41,4 @@ export const updateAssistant = async (id: number, data: Partial<AssistantData>) 
 // 5. 활동지원사 삭제 (DELETE /assistants/{id})
 export const deleteAssistant = async (id: number) => {
   await axiosInstance.delete(`/assistants/${id}`);
->>>>>>> 2week
 };

@@ -1,25 +1,14 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { registerAssistant, type AssistantData } from '../../api/assistantApi';
-import './AssistantRegister.css';
-=======
 // frontend/src/pages/Assistant/AssistantRegister.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerAssistant, type AssistantData } from '../../api/assistantApi';
 import './Assistant.css';
->>>>>>> 2week
 
 const AssistantRegister: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<AssistantData>({
     assistant_name: '', assistant_phone: '', work_days: '',
     work_start_date: '', assistant_license: '', assistant_memo: '',
-<<<<<<< HEAD
-    organization_id: 1,
-=======
->>>>>>> 2week
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware  # ✅ CORS 미들웨어 가�
 from app.api.api import api_router
 from app.core.database import engine, Base
 
+# Base.metadata가 인지할 수 있도록 모든 모델을 여기서 import
 from app.models import (
     organization, staff, client, assistant,
     assignment, service_log, document, document_requirement
@@ -25,15 +26,16 @@ app.add_middleware(
     allow_headers=["*"],              # 모든 HTTP 헤더 허용
 )
 
+app.include_router(api_router)
+
 # 서버 시작 시 테이블 생성 (이미 있으면 생성 안 함)
 Base.metadata.create_all(bind=engine)
 
-# 중복 등록되어 있던 라우터 코드를 하나로 깔끔하게 정리 완료!
-app.include_router(api_router)
 
 @app.get("/")
 def read_root():
     return {"message": "Helper Hub API가 정상 작동 중입니다!"}
+
 
 def main():
     print("Hello from backend!")
