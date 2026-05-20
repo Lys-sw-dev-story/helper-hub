@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.routers import client, assistant, auth, document
+from app.api.routers import assignment, client, assistant, auth, document
 
 api_router = APIRouter()
 api_router.include_router(client.router, prefix="/clients", tags=["Clients"])
@@ -10,4 +10,7 @@ api_router.include_router(
     document.requirement_router,
     prefix="/document-requirements",
     tags=["Document Requirements"],
+)
+api_router.include_router(
+    assignment.router, prefix="/assignments", tags=["Assignments"]
 )
