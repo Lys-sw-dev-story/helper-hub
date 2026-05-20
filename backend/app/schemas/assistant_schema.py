@@ -27,6 +27,10 @@ class AssistantUpdate(BaseModel):
 class AssistantResponse(BaseModel):
     assistant_id: int
     assistant_name: str
+    assistant_phone: Optional[str] = None
+    work_days: Optional[str] = None
+    work_start_date: Optional[date] = None
+    assistant_license: Optional[str] = None
     status: str = "success"
 
     class Config:

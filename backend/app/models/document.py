@@ -6,7 +6,7 @@ class Document(Base):
     __tablename__ = "document"
 
     document_id = Column(BigInteger, primary_key=True, autoincrement=True)
-    target_id = Column(BigInteger, nullable=False)  # client_id 또는 assistant_id
+    target_id = Column(BigInteger, nullable=False)
     file_path = Column(String(500))
     created_date = Column(Date)
     expiration_date = Column(Date)
