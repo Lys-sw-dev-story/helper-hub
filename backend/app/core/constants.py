@@ -18,3 +18,8 @@ class DocumentTargetType(StrEnum):
     ORGANIZATION = "organization"
     CLIENT = "client"
     ASSISTANT = "assistant"
+
+
+class AssignmentStatus(StrEnum):
+    ACTIVE = "active"
+    ENDED = "ended"
