@@ -11,6 +11,7 @@ class Document(Base):
     created_date = Column(Date)
     expiration_date = Column(Date)
     is_submitted = Column(Boolean, default=False)
+    needs_revision = Column(Boolean, default=False, nullable=False)
     document_memo = Column(Text)
     requirement_id = Column(BigInteger, ForeignKey("document_requirement.requirement_id"), nullable=False)
     organization_id = Column(BigInteger, ForeignKey("organization.organization_id"), nullable=False)

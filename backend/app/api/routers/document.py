@@ -11,7 +11,9 @@ from app.core.database import get_db
 from app.models.staff import Staff
 from app.schemas.document_schema import (
     DocumentChecklistItem,
+    DocumentRequirementCreate,
     DocumentRequirementResponse,
+    DocumentRequirementUpdate,
     DocumentResponse,
     DocumentUpdate,
 )
@@ -143,3 +145,42 @@ def list_requirements(
     current_staff: Staff = Depends(get_current_staff),
 ):
     return document_service.list_requirements(db=db, target_type=target_type)
+
+
+@requirement_router.post(
+    "",
+    response_model=DocumentRequirementResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_requirement(
+    payload: DocumentRequirementCreate,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return document_service.create_requirement(db=db, payload=payload)
+
+
+@requirement_router.patch(
+    "/{requirement_id}", response_model=DocumentRequirementResponse
+)
+def update_requirement(
+    requirement_id: int,
+    payload: DocumentRequirementUpdate,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return document_service.update_requirement(
+        db=db, requirement_id=requirement_id, payload=payload
+    )
+
+
+@requirement_router.delete(
+    "/{requirement_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_requirement(
+    requirement_id: int,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    document_service.delete_requirement(db=db, requirement_id=requirement_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

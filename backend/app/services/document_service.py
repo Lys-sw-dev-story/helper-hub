@@ -16,6 +16,8 @@ from app.models.document import Document
 from app.models.document_requirement import DocumentRequirement
 from app.schemas.document_schema import (
     DocumentChecklistItem,
+    DocumentRequirementCreate,
+    DocumentRequirementUpdate,
     DocumentResponse,
     DocumentUpdate,
 )
@@ -25,12 +27,11 @@ UPLOAD_ROOT = Path(__file__).resolve().parents[2] / "uploads"
 
 
 def compute_status(document: Document, today: date) -> DocumentStatus:
-    """is_submitted + expiration_date 로 4종 상태 동적 산출.
-
-    보완필요(NEEDS_REVISION) 는 별도 컬럼이 필요하므로 추후 도입.
-    """
+    """is_submitted + needs_revision + expiration_date 조합으로 5종 상태 산출."""
     if not document.is_submitted:
         return DocumentStatus.NOT_SUBMITTED
+    if document.needs_revision:
+        return DocumentStatus.NEEDS_REVISION
     if document.expiration_date is None:
         return DocumentStatus.SUBMITTED
     if document.expiration_date < today:
@@ -51,6 +52,7 @@ def _to_response(document: Document, today: date) -> DocumentResponse:
         created_date=document.created_date,
         expiration_date=document.expiration_date,
         is_submitted=document.is_submitted,
+        needs_revision=bool(document.needs_revision),
         document_memo=document.document_memo,
         status=compute_status(document, today),
     )
@@ -108,6 +110,95 @@ def list_requirements(
     if target_type is not None:
         query = query.filter(DocumentRequirement.target_type == target_type.value)
     return query.order_by(DocumentRequirement.requirement_id).all()
+
+
+def create_requirement(
+    db: Session, payload: DocumentRequirementCreate
+) -> DocumentRequirement:
+    name = payload.document_name.strip()
+    if not name:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="서류명을 입력해주세요.",
+        )
+
+    duplicate = (
+        db.query(DocumentRequirement)
+        .filter(
+            DocumentRequirement.target_type == payload.target_type.value,
+            DocumentRequirement.document_name == name,
+        )
+        .first()
+    )
+    if duplicate is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="이미 같은 대상·서류명의 정의가 존재합니다.",
+        )
+
+    requirement = DocumentRequirement(
+        target_type=payload.target_type.value,
+        document_name=name,
+        valid_period_years=payload.valid_period_years,
+    )
+    db.add(requirement)
+    db.commit()
+    db.refresh(requirement)
+    return requirement
+
+
+def update_requirement(
+    db: Session, requirement_id: int, payload: DocumentRequirementUpdate
+) -> DocumentRequirement:
+    requirement = _get_requirement_or_404(db, requirement_id)
+    data = payload.model_dump(exclude_unset=True)
+
+    new_name = data.get("document_name")
+    if new_name is not None:
+        new_name = new_name.strip()
+        if not new_name:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="서류명을 입력해주세요.",
+            )
+        duplicate = (
+            db.query(DocumentRequirement)
+            .filter(
+                DocumentRequirement.target_type == requirement.target_type,
+                DocumentRequirement.document_name == new_name,
+                DocumentRequirement.requirement_id != requirement_id,
+            )
+            .first()
+        )
+        if duplicate is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="이미 같은 대상·서류명의 정의가 존재합니다.",
+            )
+        requirement.document_name = new_name
+
+    if "valid_period_years" in data:
+        requirement.valid_period_years = data["valid_period_years"]
+
+    db.commit()
+    db.refresh(requirement)
+    return requirement
+
+
+def delete_requirement(db: Session, requirement_id: int) -> None:
+    requirement = _get_requirement_or_404(db, requirement_id)
+    in_use = (
+        db.query(Document.document_id)
+        .filter(Document.requirement_id == requirement_id)
+        .first()
+    )
+    if in_use is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="이미 등록된 서류가 있어 삭제할 수 없습니다.",
+        )
+    db.delete(requirement)
+    db.commit()
 
 
 def list_documents(
