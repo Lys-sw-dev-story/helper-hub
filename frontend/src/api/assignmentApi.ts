@@ -1,5 +1,22 @@
 import axiosInstance from './axiosInstance';
 
+// 🚀 백엔드(FastAPI)의 Summary 스키마 구조와 1:1 매칭되는 내부 타입 정의
+export interface ClientSummary {
+  client_id: number;
+  client_name: string;
+}
+
+export interface AssistantSummary {
+  assistant_id: number;
+  assistant_name: string;
+  work_days?: string | null;
+}
+
+export interface StaffSummary {
+  staff_id: number;
+  staff_name: string;
+}
+
 export interface Assignment {
   assignment_id: number;
   staff_id: number;
@@ -9,9 +26,10 @@ export interface Assignment {
   end_date: string | null;
   assignment_status: string; // "active" | "ended"
 
-  // 백엔드에서 Relationship으로 Join해서 보내줄 이용자/지원사 이름
-  client_name?: string;
-  assistant_name?: string;
+  // 🚀 백엔드 정석 스키마에 맞춰 중첩 객체(Nested Object) 구조 타입 추가!
+  client?: ClientSummary | null;
+  assistant?: AssistantSummary | null;
+  staff?: StaffSummary | null;
 }
 
 // 1. 전체 매칭 목록 조회
@@ -27,7 +45,7 @@ export const getAssignmentById = async (id: number): Promise<Assignment> => {
 };
 
 // 3. 신규 매칭 등록
-export const createAssignment = async (data: Omit<Assignment, 'assignment_id' | 'assignment_status'>): Promise<void> => {
+export const createAssignment = async (data: Omit<Assignment, 'assignment_id' | 'assignment_status' | 'client' | 'assistant' | 'staff'>): Promise<void> => {
   await axiosInstance.post('/api/assignments', data);
 };
 

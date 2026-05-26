@@ -9,9 +9,15 @@ const AssistantEdit: React.FC = () => {
   const assistantId = Number(assistantIdParam);
 
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState<AssistantData>({
-    assistant_name: '', assistant_phone: '', work_days: '',
-    work_start_date: '', assistant_license: '', assistant_memo: '',
+  
+  // 🚀 [해결 포인트] state 타입을 Partial<AssistantData>로 명시하여 organization_id 누락 에러 방지!
+  const [formData, setFormData] = useState<Partial<AssistantData>>({
+    assistant_name: '', 
+    assistant_phone: '', 
+    work_days: '',
+    work_start_date: '', 
+    assistant_license: '', 
+    assistant_memo: '',
   });
 
   useEffect(() => {
@@ -44,6 +50,7 @@ const AssistantEdit: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // 🚀 Partial 규격과 안전하게 싱크 완료!
       await updateAssistant(assistantId, formData);
       alert('활동지원사 정보가 성공적으로 변경되었습니다! 💾');
       navigate(`/assistants/${assistantId}`);
@@ -64,27 +71,27 @@ const AssistantEdit: React.FC = () => {
       <form onSubmit={handleSubmit} className="assistant-form">
         <div className="form-group">
           <label>활동지원사 성함 (필수)</label>
-          <input name="assistant_name" value={formData.assistant_name} onChange={handleChange} required />
+          <input name="assistant_name" value={formData.assistant_name || ''} onChange={handleChange} required />
         </div>
         <div className="form-group">
           <label>연락처</label>
-          <input name="assistant_phone" value={formData.assistant_phone} onChange={handleChange} />
+          <input name="assistant_phone" value={formData.assistant_phone || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>근무 가능 요일</label>
-          <input name="work_days" value={formData.work_days} onChange={handleChange} />
+          <input name="work_days" value={formData.work_days || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>업무 시작일</label>
-          <input name="work_start_date" type="date" value={formData.work_start_date} onChange={handleChange} />
+          <input name="work_start_date" type="date" value={formData.work_start_date || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>자격증 정보</label>
-          <input name="assistant_license" value={formData.assistant_license} onChange={handleChange} />
+          <input name="assistant_license" value={formData.assistant_license || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>메모 및 특이사항</label>
-          <textarea name="assistant_memo" value={formData.assistant_memo} onChange={handleChange} rows={4} />
+          <textarea name="assistant_memo" value={formData.assistant_memo || ''} onChange={handleChange} rows={4} />
         </div>
 
         <div className="btn-group">

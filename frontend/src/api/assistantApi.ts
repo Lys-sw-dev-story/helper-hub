@@ -14,9 +14,9 @@ export interface AssistantDetail extends AssistantData {
   assistant_id: number;
 }
 
-// 1. 활동지원사 목록 조회
+// 1. 활동지원사 목록 조회 (끝 주소 깔끔하게 정돈)
 export const getAssistants = async (): Promise<AssistantDetail[]> => {
-  const response = await axiosInstance.get('/api/assistants/');
+  const response = await axiosInstance.get('/api/assistants');
   return response.data;
 };
 
@@ -30,7 +30,7 @@ export const getAssistant = async (id: number): Promise<AssistantDetail> => {
 export const registerAssistant = async (
   data: AssistantData
 ): Promise<AssistantDetail> => {
-  const response = await axiosInstance.post('/api/assistants/', data);
+  const response = await axiosInstance.post('/api/assistants', data);
   return response.data;
 };
 

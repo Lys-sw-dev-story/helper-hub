@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { Routes, Route } from "react-router-dom";
 import AssistantList from "../pages/Assistant/AssistantList";
 import AssistantRegister from "../pages/Assistant/AssistantRegister";
