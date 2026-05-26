@@ -67,10 +67,12 @@ const AssignmentList: React.FC = () => {
                   onClick={() => navigate(`/assignments/${asm.assignment_id}`)}
                 >
                   <td className="emp-name">
-                    {asm.client_name || `고객 (ID: ${asm.client_id})`}
+                    {/* 🚀 백엔드 중첩 객체 스키마 반영: client.client_name으로 접근 */}
+                    {asm.client?.client_name || `고객 (ID: ${asm.client_id})`}
                   </td>
                   <td className="assistant-name-cell">
-                    {asm.assistant_name || `지원사 (ID: ${asm.assistant_id})`}
+                    {/* 🚀 백엔드 중첩 객체 스키마 반영: assistant.assistant_name으로 접근 */}
+                    {asm.assistant?.assistant_name || `지원사 (ID: ${asm.assistant_id})`}
                   </td>
                   <td>{asm.start_date}</td>
                   <td>
