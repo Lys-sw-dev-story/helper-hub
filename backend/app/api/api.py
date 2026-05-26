@@ -1,5 +1,14 @@
 from fastapi import APIRouter
-from app.api.routers import assignment, client, assistant, auth, document
+from app.api.routers import (
+    assignment,
+    assistant,
+    audit,
+    auth,
+    client,
+    dashboard,
+    document,
+    service_log,
+)
 
 api_router = APIRouter()
 api_router.include_router(client.router, prefix="/clients", tags=["Clients"])
@@ -14,3 +23,8 @@ api_router.include_router(
 api_router.include_router(
     assignment.router, prefix="/assignments", tags=["Assignments"]
 )
+api_router.include_router(
+    service_log.router, prefix="/service-logs", tags=["Service Logs"]
+)
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+api_router.include_router(audit.router, prefix="/audit", tags=["Audit"])

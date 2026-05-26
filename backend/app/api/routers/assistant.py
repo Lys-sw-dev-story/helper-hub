@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from datetime import date
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_staff
@@ -8,8 +11,11 @@ from app.models.assistant import Assistant
 from app.schemas.assistant_schema import (
     AssistantCreate,
     AssistantDetailResponse,
+    AssistantPayrollTenureResponse,
     AssistantResponse,
     AssistantUpdate,
+    AssistantWorkHoursSummary,
+    TenureInfo,
 )
 from app.services import assistant_service
 
@@ -49,6 +55,52 @@ def register_assistant(
     db: Session = Depends(get_db),
 ):
     return assistant_service.create_assistant(db, assistant_in)
+
+
+@router.get("/payroll-tenure", response_model=AssistantPayrollTenureResponse)
+def read_payroll_tenure(
+    year: Optional[int] = Query(default=None, ge=2000, le=2100),
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    today = date.today()
+    return assistant_service.build_payroll_tenure_list(
+        db=db,
+        organization_id=current_staff.organization_id,
+        reference_date=today,
+        year=year or today.year,
+    )
+
+
+@router.get("/{assistant_id}/tenure", response_model=TenureInfo)
+def read_assistant_tenure(
+    assistant_id: int,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return assistant_service.get_tenure(
+        db=db,
+        assistant_id=assistant_id,
+        organization_id=current_staff.organization_id,
+        reference_date=date.today(),
+    )
+
+
+@router.get(
+    "/{assistant_id}/work-hours", response_model=AssistantWorkHoursSummary
+)
+def read_assistant_work_hours(
+    assistant_id: int,
+    year: Optional[int] = Query(default=None, ge=2000, le=2100),
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    return assistant_service.compute_work_hours(
+        db=db,
+        assistant_id=assistant_id,
+        organization_id=current_staff.organization_id,
+        year=year or date.today().year,
+    )
 
 
 @router.get("/{assistant_id}", response_model=AssistantDetailResponse)
