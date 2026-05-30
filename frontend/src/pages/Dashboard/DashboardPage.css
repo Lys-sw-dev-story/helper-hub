@@ -1,0 +1,151 @@
+.dashboard-page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 상단 헤더 구역 */
+.dashboard-page-container .page-header {
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-page-container .page-header h2 {
+  font-size: 1.65rem;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.dashboard-page-container .page-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* 통계 그리드 레이아웃 */
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.summary-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.summary-card h3 {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.card-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.card-number span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-left: 0.2rem;
+}
+
+/* 활성 배정 강조색 */
+.active-color {
+  color: #10b981;
+}
+
+/* 위험 경고 카드 및 스펙 */
+.alert-card {
+  background-color: #fff1f2;
+  border-color: #fecdd3;
+}
+
+.danger-color {
+  color: #f43f5e;
+}
+
+/* 차트 구역 백그라운드 구조 */
+.chart-section {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.chart-section h3 {
+  font-size: 1.1rem;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.status-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.status-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-label {
+  width: 160px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* 차트 트랙 디자인 */
+.bar-track {
+  flex: 1;
+  height: 12px;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  margin: 0 1.5rem;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 서류 상태 테마 컬러 커스텀 */
+.bar-fill.not_submitted { background-color: #f43f5e; }
+.bar-fill.submitted { background-color: #10b981; }
+.bar-fill.expiring_soon { background-color: #f59e0b; }
+.bar-fill.expired { background-color: #7c3aed; }
+.bar-fill.needs_revision { background-color: #3b82f6; }
+
+.status-count {
+  width: 50px;
+  text-align: right;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 로딩/에러/공백 상태 */
+.dashboard-loading, .dashboard-error, .dashboard-empty {
+  text-align: center;
+  padding: 6rem;
+  font-size: 1.05rem;
+  color: #64748b;
+  font-weight: 500;
+}
+.dashboard-error { color: #ef4444; }

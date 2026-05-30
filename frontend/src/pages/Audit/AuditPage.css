@@ -1,0 +1,169 @@
+.audit-page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 상단 헤더 구역 */
+.audit-page-container .page-header {
+  margin-bottom: 2rem;
+}
+
+.audit-page-container .page-header h2 {
+  font-size: 1.6rem;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+
+.audit-page-container .page-header p {
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+/* 최근 2년 현황 요약 띠 스탠드 */
+.recent-summary-strip {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.strip-title {
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.strip-grid {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.strip-item {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.strip-item span {
+  font-weight: 700;
+  color: #0f172a;
+  margin-left: 0.2rem;
+}
+
+/* 점검 필터 탭 스타일 가이드 */
+.audit-tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.audit-tab {
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.audit-tab:hover {
+  background-color: #f8fafc;
+}
+
+/* 활성화 상태별 고유 컬러 바인딩 */
+.audit-tab.missing.active { background-color: #ef4444; color: #ffffff; border-color: #ef4444; }
+.audit-tab.expiring_soon.active { background-color: #f59e0b; color: #ffffff; border-color: #f59e0b; }
+.audit-tab.expired.active { background-color: #7c3aed; color: #ffffff; border-color: #7c3aed; }
+.audit-tab.needs_revision.active { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; }
+.audit-tab.retention.active { background-color: #64748b; color: #ffffff; border-color: #64748b; }
+
+/* 데이터 목록 하단 카드 레이아웃 */
+.audit-detail-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+.audit-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 14px 18px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.audit-table td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.audit-row:hover {
+  background-color: #f8fafc;
+}
+
+/* 타겟 구분 배지 */
+.target-badge {
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.target-badge.client { background-color: #ecfdf5; color: #059669; }
+.target-badge.assistant { background-color: #f0fdfa; color: #0d9488; }
+
+.name-cell { font-weight: 600; color: #1e293b; }
+.doc-name-cell { font-weight: 500; color: #0f172a; }
+.null-text { color: #cbd5e1; }
+
+/* 기한 / 우측 액션 지표 배지 스타일 */
+.status-tag-red, .status-tag-blue, .status-tag-orange, .status-tag-purple, .status-tag-gray {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-block;
+}
+.status-tag-red { background-color: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
+.status-tag-blue { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.status-tag-orange { background-color: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
+.status-tag-purple { background-color: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.status-tag-gray { background-color: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+
+.audit-loading, .audit-error {
+  text-align: center;
+  padding: 6rem;
+  font-size: 1.1rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 5rem !important;
+  color: #059669;
+  background-color: #f0fdf4;
+  font-weight: 500;
+}

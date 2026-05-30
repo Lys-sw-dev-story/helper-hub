@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { getAssistant, deleteAssistant, type AssistantData } from '../../api/assistantApi';
+import { getAssistant, deleteAssistant, getAssistantTenure, getAssistantWorkHours, type AssistantData, type TenureInfo, type AssistantWorkHoursSummary } from '../../api/assistantApi';
 import './Assistant.css';
 
 const AssistantDetail: React.FC = () => {
@@ -11,12 +11,20 @@ const AssistantDetail: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<AssistantData | null>(null);
+  const [tenure, setTenure] = useState<TenureInfo | null>(null);
+  const [workHours, setWorkHours] = useState<AssistantWorkHoursSummary | null>(null);
 
   useEffect(() => {
     if (assistantId) {
-      getAssistant(assistantId)
-        .then((res) => {
+      Promise.all([
+        getAssistant(assistantId),
+        getAssistantTenure(assistantId).catch(() => null),
+        getAssistantWorkHours(assistantId).catch(() => null)
+      ])
+        .then(([res, tenureRes, workHoursRes]) => {
           setData(res);
+          if (tenureRes) setTenure(tenureRes);
+          if (workHoursRes) setWorkHours(workHoursRes);
           setLoading(false);
         })
         .catch((err) => {
@@ -47,7 +55,6 @@ const AssistantDetail: React.FC = () => {
 
   return (
     <div className="assistant-card">
-      {/* 스타일 대문자 카멜케이스로 완벽 수정 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h2>🔍 활동지원사 상세 프로필</h2>
         <button onClick={handleDelete} className="btn btn-danger">정보 삭제 🗑️</button>
@@ -70,6 +77,26 @@ const AssistantDetail: React.FC = () => {
           <label>업무 시작일</label>
           <div className="detail-value">{data.work_start_date || '-'}</div>
         </div>
+        
+        {tenure && (
+          <div className="form-group">
+            <label>근속 기간 (기준일: {tenure.reference_date})</label>
+            <div className="detail-value">
+              {tenure.years}년 {tenure.months}개월 {tenure.days}일 (총 {tenure.total_days}일)
+            </div>
+          </div>
+        )}
+
+        {workHours && (
+          <div className="form-group">
+            <label>{workHours.year}년 근로 통계</label>
+            <div className="detail-value">
+              <p>올해 누적: {workHours.yearly_hours}시간 ({workHours.yearly_count}건)</p>
+              <p>전체 누적: {workHours.cumulative_hours}시간 ({workHours.cumulative_count}건)</p>
+            </div>
+          </div>
+        )}
+
         <div className="form-group">
           <label>자격증 정보</label>
           <div className="detail-value">{data.assistant_license || '-'}</div>
