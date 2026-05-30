@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import type { DocumentStatus } from './documentApi';
+import { DocumentStatus } from './documentApi';
 
 export interface DashboardCounts {
   client_count: number;

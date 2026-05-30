@@ -28,13 +28,22 @@ const DashboardPage: React.FC = () => {
 
   const { counts, document_status_chart } = summary;
 
-  // 백엔드 영문 상태값을 직관적인 한글 타이틀로 매핑
+  // 백엔드 상태값을 직관적인 한글 타이틀로 매핑
   const statusLabels: Record<string, string> = {
-    not_submitted: '미제출 서류',
-    submitted: '제출완료 (정상)',
-    expiring_soon: '만료임박 (보완요망)',
-    expired: '기간만료 (재제출 필요)',
-    needs_revision: '보완필요 상태',
+    '미제출': '미제출 서류',
+    '제출완료': '제출완료 (정상)',
+    '만료예정': '만료임박 (보완요망)',
+    '만료': '기간만료 (재제출 필요)',
+    '보완필요': '보완필요 상태',
+  };
+
+  // 백엔드 상태값을 CSS 클래스명으로 매핑
+  const statusClasses: Record<string, string> = {
+    '미제출': 'not_submitted',
+    '제출완료': 'submitted',
+    '만료예정': 'expiring_soon',
+    '만료': 'expired',
+    '보완필요': 'needs_revision',
   };
 
   return (
@@ -77,7 +86,7 @@ const DashboardPage: React.FC = () => {
                 <span className="status-label">{statusLabels[item.status] || item.status}</span>
                 <div className="bar-track">
                   <div 
-                    className={`bar-fill ${item.status}`} 
+                    className={`bar-fill ${statusClasses[item.status] || ''}`} 
                     style={{ width: `${Math.min(fillWidth, 100)}%` }}
                   ></div>
                 </div>

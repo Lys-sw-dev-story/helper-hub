@@ -1,13 +1,18 @@
 import axiosInstance from './axiosInstance';
 
-export type DocumentTargetType = 'client' | 'assistant';
+export enum DocumentTargetType {
+  ORGANIZATION = 'organization',
+  CLIENT = 'client',
+  ASSISTANT = 'assistant'
+}
 
-export type DocumentStatus = 
-  | 'not_submitted'
-  | 'submitted'
-  | 'expiring_soon'
-  | 'expired'
-  | 'needs_revision';
+export enum DocumentStatus {
+  NOT_SUBMITTED = '미제출',
+  SUBMITTED = '제출완료',
+  EXPIRING_SOON = '만료예정',
+  EXPIRED = '만료',
+  NEEDS_REVISION = '보완필요'
+}
 
 export interface DocumentRequirementCreate {
   target_type: DocumentTargetType;

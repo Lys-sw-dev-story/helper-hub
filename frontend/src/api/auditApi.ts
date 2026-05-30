@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import type { DocumentStatus, DocumentTargetType } from './documentApi';
+import { DocumentStatus, DocumentTargetType } from './documentApi';
 
 export interface AuditDocumentItem {
   document_id?: number | null;

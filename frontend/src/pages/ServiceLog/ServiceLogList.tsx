@@ -1,33 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { listServiceLogs } from '../../api/serviceLogApi';
+import { useNavigate } from 'react-router-dom';
+import { listServiceLogs, deleteServiceLog } from '../../api/serviceLogApi';
 import type { ServiceLogResponse } from '../../api/serviceLogApi';
 import './ServiceLogList.css';
 
 const ServiceLogList: React.FC = () => {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState<ServiceLogResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchLogs = async () => {
+    try {
+      const data = await listServiceLogs();
+      setLogs(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const data = await listServiceLogs();
-        setLogs(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchLogs();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('정말 이 일지를 삭제하시겠습니까?')) {
+      try {
+        await deleteServiceLog(id);
+        alert('삭제되었습니다.');
+        fetchLogs();
+      } catch (err) {
+        console.error(err);
+        alert('삭제에 실패했습니다.');
+      }
+    }
+  };
 
   if (loading) return <div className="loading-box">이용내역을 불러오는 중... 🚀</div>;
 
   return (
     <div className="servicelog-container">
       <div className="page-header">
-        <h2>🗓️ 사회복지 서비스 제공 내역 관리</h2>
-        <p>배정된 이용자와 활동지원사의 일별 일지 등록 내역을 검토합니다.</p>
+        <div className="header-title">
+          <h2>🗓️ 사회복지 서비스 제공 내역 관리</h2>
+          <p>배정된 이용자와 활동지원사의 일별 일지 등록 내역을 검토합니다.</p>
+        </div>
+        <button className="btn-primary add-btn" onClick={() => navigate('/service-logs/new')}>
+          + 신규 일지 등록
+        </button>
       </div>
 
       <div className="servicelog-card">
@@ -41,12 +62,13 @@ const ServiceLogList: React.FC = () => {
               <th>제공 시간</th>
               <th>제공 횟수</th>
               <th>주요 서비스 수행 내용</th>
+              <th>관리</th>
             </tr>
           </thead>
           <tbody>
             {logs.length === 0 ? (
               <tr>
-                <td colSpan={7} className="empty-row">
+                <td colSpan={8} className="empty-row">
                   등록된 서비스 이용내역 일지가 존재하지 않습니다.
                 </td>
               </tr>
@@ -63,6 +85,10 @@ const ServiceLogList: React.FC = () => {
                   <td className="count-cell">{log.service_count ?? '-'}회</td>
                   <td className="content-cell" title={log.service_content || ''}>
                     {log.service_content ?? <span className="no-content">작성 내용 없음</span>}
+                  </td>
+                  <td className="action-cell">
+                    <button className="btn-edit" onClick={() => navigate(`/service-logs/${log.service_log_id}/edit`)}>수정</button>
+                    <button className="btn-delete" onClick={() => handleDelete(log.service_log_id)}>삭제</button>
                   </td>
                 </tr>
               ))
