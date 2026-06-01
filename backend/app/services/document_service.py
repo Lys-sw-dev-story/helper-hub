@@ -27,15 +27,13 @@ UPLOAD_ROOT = Path(__file__).resolve().parents[2] / "uploads"
 
 
 def compute_status(document: Document, today: date) -> DocumentStatus:
-    """is_submitted + needs_revision + expiration_date 조합으로 5종 상태 산출."""
+    """is_submitted + expiration_date 조합으로 3종 상태 산출."""
     if not document.is_submitted:
         return DocumentStatus.NOT_SUBMITTED
-    if document.needs_revision:
-        return DocumentStatus.NEEDS_REVISION
     if document.expiration_date is None:
         return DocumentStatus.SUBMITTED
     if document.expiration_date < today:
-        return DocumentStatus.EXPIRED
+        return DocumentStatus.NOT_SUBMITTED
     if document.expiration_date <= today + timedelta(days=EXPIRATION_WARNING_DAYS):
         return DocumentStatus.EXPIRING_SOON
     return DocumentStatus.SUBMITTED
@@ -342,6 +340,8 @@ def build_checklist(
                     document_name=req.document_name,
                     valid_period_years=req.valid_period_years,
                     document_id=None,
+                    expiration_date=None,
+                    file_path=None,
                     status=DocumentStatus.NOT_SUBMITTED,
                 )
             )
@@ -352,6 +352,8 @@ def build_checklist(
                     document_name=req.document_name,
                     valid_period_years=req.valid_period_years,
                     document_id=document.document_id,
+                    expiration_date=document.expiration_date,
+                    file_path=document.file_path,
                     status=compute_status(document, today),
                 )
             )

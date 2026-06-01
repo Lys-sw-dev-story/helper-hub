@@ -19,8 +19,6 @@ export interface AuditDocumentItem {
 export interface AuditOverview {
   missing: AuditDocumentItem[];
   expiring_soon: AuditDocumentItem[];
-  expired: AuditDocumentItem[];
-  needs_revision: AuditDocumentItem[];
   retention_ending_soon: AuditDocumentItem[];
 }
 

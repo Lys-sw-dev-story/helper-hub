@@ -3,7 +3,7 @@ import { getAuditOverview, getAuditRecent } from '../../api/auditApi';
 import type { AuditOverview, AuditRecentResponse, AuditDocumentItem } from '../../api/auditApi';
 import './AuditPage.css';
 
-type AuditTab = 'missing' | 'expiring_soon' | 'expired' | 'needs_revision' | 'retention_ending_soon';
+type AuditTab = 'missing' | 'expiring_soon' | 'retention_ending_soon';
 
 const AuditPage: React.FC = () => {
   const [overview, setOverview] = useState<AuditOverview | null>(null);
@@ -37,8 +37,6 @@ const AuditPage: React.FC = () => {
     switch (activeTab) {
       case 'missing': return overview.missing;
       case 'expiring_soon': return overview.expiring_soon;
-      case 'expired': return overview.expired;
-      case 'needs_revision': return overview.needs_revision;
       case 'retention_ending_soon': return overview.retention_ending_soon;
       default: return [];
     }
@@ -66,19 +64,13 @@ const AuditPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2구역: 5대 핵심 점검 요인 탭 바 컨트롤러 */}
+      {/* 2구역: 3대 핵심 점검 요인 탭 바 컨트롤러 */}
       <div className="audit-tab-bar">
         <button className={`audit-tab missing ${activeTab === 'missing' ? 'active' : ''}`} onClick={() => setActiveTab('missing')}>
           ⚠️ 미제출 ({overview.missing.length})
         </button>
         <button className={`audit-tab expiring_soon ${activeTab === 'expiring_soon' ? 'active' : ''}`} onClick={() => setActiveTab('expiring_soon')}>
           ⏳ 만료예정 ({overview.expiring_soon.length})
-        </button>
-        <button className={`audit-tab expired ${activeTab === 'expired' ? 'active' : ''}`} onClick={() => setActiveTab('expired')}>
-          🚨 기간만료 ({overview.expired.length})
-        </button>
-        <button className={`audit-tab needs_revision ${activeTab === 'needs_revision' ? 'active' : ''}`} onClick={() => setActiveTab('needs_revision')}>
-          🔧 보완필요 ({overview.needs_revision.length})
         </button>
         <button className={`audit-tab retention ${activeTab === 'retention_ending_soon' ? 'active' : ''}`} onClick={() => setActiveTab('retention_ending_soon')}>
           📦 보관임박 ({overview.retention_ending_soon.length})
@@ -119,8 +111,6 @@ const AuditPage: React.FC = () => {
                   <td>{item.expiration_date || <span className="null-text">-</span>}</td>
                   <td>
                     {activeTab === 'missing' && <span className="status-tag-red">서류미비</span>}
-                    {activeTab === 'needs_revision' && <span className="status-tag-blue">수정·보완요망</span>}
-                    {activeTab === 'expired' && <span className="status-tag-purple">효력상실</span>}
                     {activeTab === 'expiring_soon' && (
                       <span className="status-tag-orange">
                         {item.days_until_expire !== null ? `${item.days_until_expire}일 남음` : '만료임박'}

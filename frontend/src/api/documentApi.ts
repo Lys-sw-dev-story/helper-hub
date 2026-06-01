@@ -1,18 +1,20 @@
 import axiosInstance from './axiosInstance';
 
-export enum DocumentTargetType {
-  ORGANIZATION = 'organization',
-  CLIENT = 'client',
-  ASSISTANT = 'assistant'
-}
+export const DocumentTargetType = {
+  ORGANIZATION: 'organization',
+  CLIENT: 'client',
+  ASSISTANT: 'assistant'
+} as const;
 
-export enum DocumentStatus {
-  NOT_SUBMITTED = '미제출',
-  SUBMITTED = '제출완료',
-  EXPIRING_SOON = '만료예정',
-  EXPIRED = '만료',
-  NEEDS_REVISION = '보완필요'
-}
+export type DocumentTargetType = typeof DocumentTargetType[keyof typeof DocumentTargetType];
+
+export const DocumentStatus = {
+  NOT_SUBMITTED: '미제출',
+  SUBMITTED: '제출',
+  EXPIRING_SOON: '만료예정'
+} as const;
+
+export type DocumentStatus = typeof DocumentStatus[keyof typeof DocumentStatus];
 
 export interface DocumentRequirementCreate {
   target_type: DocumentTargetType;
@@ -55,12 +57,10 @@ export interface DocumentUpdate {
 export interface DocumentChecklistItem {
   requirement_id: number;
   document_name: string;
+  valid_period_years?: number | null;
   document_id?: number | null;
-  created_date?: string | null;
   expiration_date?: string | null;
-  is_submitted: boolean;
-  needs_revision: boolean;
-  document_memo?: string | null;
+  file_path?: string | null;
   status: DocumentStatus;
 }
 
@@ -99,11 +99,30 @@ export const getChecklist = async (target_type: DocumentTargetType, target_id: n
   return response.data;
 };
 
-export const upsertDocument = async (requirement_id: number, target_id: number, data: DocumentUpdate): Promise<DocumentResponse> => {
-  const response = await axiosInstance.put('/api/documents', {
-    requirement_id,
-    target_id,
-    ...data
+export const createDocument = async (requirement_id: number, target_id: number, expiration_date?: string, document_memo?: string, file?: File): Promise<DocumentResponse> => {
+  const formData = new FormData();
+  formData.append('requirement_id', requirement_id.toString());
+  formData.append('target_id', target_id.toString());
+  if (expiration_date) formData.append('expiration_date', expiration_date);
+  if (document_memo) formData.append('document_memo', document_memo);
+  if (file) formData.append('file', file);
+
+  const response = await axiosInstance.post('/api/documents', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const updateDocument = async (id: number, data: DocumentUpdate): Promise<DocumentResponse> => {
+  const response = await axiosInstance.patch(`/api/documents/${id}`, data);
+  return response.data;
+};
+
+export const replaceDocumentFile = async (id: number, file: File): Promise<DocumentResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await axiosInstance.put(`/api/documents/${id}/file`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
   });
   return response.data;
 };

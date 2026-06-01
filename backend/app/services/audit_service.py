@@ -172,11 +172,11 @@ def build_overview(
     docs = _load_org_documents(db, organization_id)
 
     expiring_soon: list[AuditDocumentItem] = []
-    expired: list[AuditDocumentItem] = []
-    needs_revision: list[AuditDocumentItem] = []
     retention_ending_soon: list[AuditDocumentItem] = []
 
     retention_warn_until = today + timedelta(days=EXPIRATION_WARNING_DAYS)
+
+    missing = _missing_items(db, organization_id, today)
 
     for doc in docs:
         if doc.requirement is None:
@@ -188,10 +188,8 @@ def build_overview(
 
         if item.status == DocumentStatus.EXPIRING_SOON:
             expiring_soon.append(item)
-        if item.status == DocumentStatus.EXPIRED:
-            expired.append(item)
-        if item.status == DocumentStatus.NEEDS_REVISION:
-            needs_revision.append(item)
+        elif item.status == DocumentStatus.NOT_SUBMITTED:
+            missing.append(item)
 
         retention_until = item.retention_until
         if (
@@ -200,15 +198,11 @@ def build_overview(
         ):
             retention_ending_soon.append(item)
 
-    missing = _missing_items(db, organization_id, today)
-
     return AuditOverview(
         missing=missing,
         expiring_soon=sorted(
             expiring_soon, key=lambda i: (i.expiration_date or date.max)
         ),
-        expired=sorted(expired, key=lambda i: (i.expiration_date or date.max)),
-        needs_revision=needs_revision,
         retention_ending_soon=sorted(
             retention_ending_soon, key=lambda i: (i.retention_until or date.max)
         ),

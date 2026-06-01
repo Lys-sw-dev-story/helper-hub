@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getAssistant, deleteAssistant, getAssistantTenure, getAssistantWorkHours, type AssistantData, type TenureInfo, type AssistantWorkHoursSummary } from '../../api/assistantApi';
+import DocumentSection from '../../components/common/DocumentSection';
+import { DocumentTargetType } from '../../api/documentApi';
 import './Assistant.css';
 
 const AssistantDetail: React.FC = () => {
@@ -106,7 +108,9 @@ const AssistantDetail: React.FC = () => {
           <div className="detail-value memo">{data.assistant_memo || '등록된 특이사항이 없습니다.'}</div>
         </div>
 
-        <div className="btn-group">
+        <DocumentSection targetType={DocumentTargetType.ASSISTANT} targetId={assistantId} readOnly={true} />
+
+        <div className="btn-group" style={{ marginTop: '2rem' }}>
           <button type="button" className="btn btn-primary" style={{ flex: 1 }} onClick={() => navigate(`/assistants/${assistantId}/edit`)}>
             정보 수정하러 가기 ✏️
           </button>

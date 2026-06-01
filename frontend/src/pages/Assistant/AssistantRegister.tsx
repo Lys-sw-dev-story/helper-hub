@@ -19,11 +19,7 @@ const AssistantRegister: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,8 +33,6 @@ const AssistantRegister: React.FC = () => {
         work_start_date: formData.work_start_date || undefined,
         assistant_license: formData.assistant_license || undefined,
         assistant_memo: formData.assistant_memo || undefined,
-
-        // seed_staff.py에서 생성된 기관 id가 1이므로 데모용으로 고정
         organization_id: 1,
       };
 
@@ -73,73 +67,32 @@ const AssistantRegister: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="assistant_phone">연락처</label>
-          <input
-            id="assistant_phone"
-            name="assistant_phone"
-            placeholder="010-0000-0000"
-            value={formData.assistant_phone}
-            onChange={handleChange}
-          />
+          <input id="assistant_phone" name="assistant_phone" placeholder="010-0000-0000" value={formData.assistant_phone} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="work_days">근무 가능 요일</label>
-          <input
-            id="work_days"
-            name="work_days"
-            placeholder="예: 월, 수, 금"
-            value={formData.work_days}
-            onChange={handleChange}
-          />
+          <input id="work_days" name="work_days" placeholder="예: 월, 수, 금" value={formData.work_days} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="work_start_date">업무 시작일</label>
-          <input
-            id="work_start_date"
-            name="work_start_date"
-            type="date"
-            value={formData.work_start_date}
-            onChange={handleChange}
-          />
+          <input id="work_start_date" name="work_start_date" type="date" value={formData.work_start_date} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="assistant_license">자격증 정보</label>
-          <input
-            id="assistant_license"
-            name="assistant_license"
-            placeholder="자격증 정보 입력"
-            value={formData.assistant_license}
-            onChange={handleChange}
-          />
+          <input id="assistant_license" name="assistant_license" placeholder="자격증 정보 입력" value={formData.assistant_license} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="assistant_memo">메모 및 특이사항</label>
-          <textarea
-            id="assistant_memo"
-            name="assistant_memo"
-            placeholder="상세 비고 내용 입력"
-            value={formData.assistant_memo}
-            onChange={handleChange}
-            rows={4}
-          />
+          <textarea id="assistant_memo" name="assistant_memo" placeholder="상세 비고 내용 입력" value={formData.assistant_memo} onChange={handleChange} rows={4} />
         </div>
 
-        <div className="btn-group">
-          <button type="submit" className="btn btn-success" style={{ flex: 1 }}>
-            등록 완료 💾
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ flex: 1 }}
-            onClick={() => navigate('/assistants')}
-          >
-            취소
-          </button>
+        <div className="btn-group" style={{ marginTop: '2rem' }}>
+          <button type="submit" className="btn btn-success" style={{ flex: 1 }}>등록 완료 💾</button>
+          <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => navigate('/assistants')}>취소</button>
         </div>
       </form>
     </div>

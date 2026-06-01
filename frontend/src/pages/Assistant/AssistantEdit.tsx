@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAssistant, updateAssistant, type AssistantData } from '../../api/assistantApi';
+import DocumentSection from '../../components/common/DocumentSection';
+import { DocumentTargetType } from '../../api/documentApi';
 import './Assistant.css';
 
 const AssistantEdit: React.FC = () => {
@@ -94,7 +96,9 @@ const AssistantEdit: React.FC = () => {
           <textarea name="assistant_memo" value={formData.assistant_memo || ''} onChange={handleChange} rows={4} />
         </div>
 
-        <div className="btn-group">
+        <DocumentSection targetType={DocumentTargetType.ASSISTANT} targetId={assistantId} />
+
+        <div className="btn-group" style={{ marginTop: '2rem' }}>
           <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>변경사항 저장 💾</button>
           <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => navigate(`/assistants/${assistantId}`)}>수정 취소</button>
         </div>

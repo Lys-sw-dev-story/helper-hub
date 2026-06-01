@@ -57,4 +57,6 @@ class DocumentChecklistItem(BaseModel):
     document_name: str
     valid_period_years: Optional[int] = None
     document_id: Optional[int] = None
+    expiration_date: Optional[date] = None
+    file_path: Optional[str] = None
     status: DocumentStatus

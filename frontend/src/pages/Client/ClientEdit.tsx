@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClient, updateClient, type ClientData } from '../../api/clientApi';
+import DocumentSection from '../../components/common/DocumentSection';
+import { DocumentTargetType } from '../../api/documentApi';
 import './Client.css';
 
 const ClientEdit: React.FC = () => {
@@ -92,7 +94,9 @@ const ClientEdit: React.FC = () => {
           <textarea name="client_memo" value={formData.client_memo} onChange={handleChange} rows={4} />
         </div>
 
-        <div className="btn-group">
+        <DocumentSection targetType={DocumentTargetType.CLIENT} targetId={clientId} />
+
+        <div className="btn-group" style={{ marginTop: '2rem' }}>
           <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>변경사항 저장 💾</button>
           <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => navigate(`/clients/${clientId}`)}>수정 취소</button>
         </div>

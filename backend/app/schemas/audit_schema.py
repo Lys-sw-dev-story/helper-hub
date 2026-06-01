@@ -25,8 +25,6 @@ class AuditDocumentItem(BaseModel):
 class AuditOverview(BaseModel):
     missing: list[AuditDocumentItem]
     expiring_soon: list[AuditDocumentItem]
-    expired: list[AuditDocumentItem]
-    needs_revision: list[AuditDocumentItem]
     retention_ending_soon: list[AuditDocumentItem]
 
 

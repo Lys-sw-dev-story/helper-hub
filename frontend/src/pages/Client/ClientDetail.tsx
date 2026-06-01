@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getClient, deleteClient, type ClientData } from '../../api/clientApi';
+import DocumentSection from '../../components/common/DocumentSection';
+import { DocumentTargetType } from '../../api/documentApi';
 import './Client.css';
 
 const ClientDetail: React.FC = () => {
@@ -82,7 +84,9 @@ const ClientDetail: React.FC = () => {
           <div className="detail-value memo">{data.client_memo || '등록된 특이사항이 없습니다.'}</div>
         </div>
 
-        <div className="btn-group">
+        <DocumentSection targetType={DocumentTargetType.CLIENT} targetId={clientId} readOnly={true} />
+
+        <div className="btn-group" style={{ marginTop: '2rem' }}>
           <button type="button" className="btn btn-primary" style={{ flex: 1 }} onClick={() => navigate(`/clients/${clientId}/edit`)}>
             정보 수정하러 가기 ✏️
           </button>
