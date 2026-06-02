@@ -17,14 +17,22 @@ from app.models import (
 from app.models.document_requirement import DocumentRequirement
 
 SEED_DATA: list[tuple[DocumentTargetType, str, int | None]] = [
-    # 이용자화일
-    (DocumentTargetType.CLIENT, "A", 1),
-    (DocumentTargetType.CLIENT, "B", 1),
-    (DocumentTargetType.CLIENT, "C", 1),
-    # 활동지원사화일
-    (DocumentTargetType.ASSISTANT, "a", 1),
-    (DocumentTargetType.ASSISTANT, "b", 1),
-    (DocumentTargetType.ASSISTANT, "c", 1),
+    # 이용자화일 (이용자 분류 — CLAUDE.md §3 서류 분류 기준)
+    (DocumentTargetType.CLIENT, "이용자 기본서류", None),
+    (DocumentTargetType.CLIENT, "계약 관련 서류", None),
+    (DocumentTargetType.CLIENT, "개인정보 동의서", None),
+    (DocumentTargetType.CLIENT, "활동지원급여 제공계획서", 1),
+    (DocumentTargetType.CLIENT, "이용내역서", None),
+    (DocumentTargetType.CLIENT, "상담/모니터링 기록", None),
+    (DocumentTargetType.CLIENT, "기타 증빙서류", None),
+    # 활동지원사화일 (활동지원사 분류)
+    (DocumentTargetType.ASSISTANT, "이력서", None),
+    (DocumentTargetType.ASSISTANT, "자격/교육 이수 관련 서류", None),
+    (DocumentTargetType.ASSISTANT, "근로계약 관련 서류", None),
+    (DocumentTargetType.ASSISTANT, "통장사본", None),
+    (DocumentTargetType.ASSISTANT, "건강 관련 서류", 1),
+    (DocumentTargetType.ASSISTANT, "근속 관련 서류", None),
+    (DocumentTargetType.ASSISTANT, "기타 증빙서류", None),
 ]
 
 def seed() -> None:
