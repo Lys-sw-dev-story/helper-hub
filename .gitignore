@@ -20,3 +20,7 @@ frontend/npm-debug.log*
 
 # 업로드 파일 (개인정보 포함 가능 — 커밋 금지)
 backend/uploads/
+
+# 데모용 더미 이용내역 시드 (커밋 금지 — 로컬 데모 전용)
+backend/scripts/seed_service_logs_demo.py
+backend/scripts/seed_demo_documents.py
