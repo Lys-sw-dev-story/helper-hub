@@ -15,19 +15,25 @@ const ClientDetail: React.FC = () => {
   const [data, setData] = useState<ClientData | null>(null);
 
   useEffect(() => {
+    let ignore = false;
     if (clientId) {
       getClient(clientId)
         .then((res) => {
+          if (ignore) return;
           setData(res);
           setLoading(false);
         })
         .catch((err) => {
+          if (ignore) return;
           console.error(err);
           const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
           alert(typeof detail === 'string' ? detail : '데이터를 가져오지 못했습니다.');
           navigate('/clients');
         });
     }
+    return () => {
+      ignore = true;
+    };
   }, [clientId, navigate]);
 
   const handleDelete = async () => {

@@ -17,6 +17,7 @@ const AssistantDetail: React.FC = () => {
   const [workHours, setWorkHours] = useState<AssistantWorkHoursSummary | null>(null);
 
   useEffect(() => {
+    let ignore = false;
     if (assistantId) {
       Promise.all([
         getAssistant(assistantId),
@@ -24,18 +25,23 @@ const AssistantDetail: React.FC = () => {
         getAssistantWorkHours(assistantId).catch(() => null)
       ])
         .then(([res, tenureRes, workHoursRes]) => {
+          if (ignore) return;
           setData(res);
           if (tenureRes) setTenure(tenureRes);
           if (workHoursRes) setWorkHours(workHoursRes);
           setLoading(false);
         })
         .catch((err) => {
+          if (ignore) return;
           console.error(err);
           const detail = axios.isAxiosError(err) ? err.response?.data?.detail : undefined;
           alert(typeof detail === 'string' ? detail : '데이터를 가져오지 못했습니다.');
           navigate('/assistants');
         });
     }
+    return () => {
+      ignore = true;
+    };
   }, [assistantId, navigate]);
 
   const handleDelete = async () => {

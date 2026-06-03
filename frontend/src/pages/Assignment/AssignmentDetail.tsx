@@ -12,15 +12,23 @@ const AssignmentDetail: React.FC = () => {
   const [isEnding, setIsEnding] = useState<boolean>(false);
 
   useEffect(() => {
+    let ignore = false;
     if (id) {
       getAssignmentById(Number(id))
-        .then(setAssignment)
+        .then((res) => {
+          if (ignore) return;
+          setAssignment(res);
+        })
         .catch((err) => {
+          if (ignore) return;
           console.error(err);
           alert('해당 매칭 정보를 찾을 수 없습니다.');
           navigate('/assignments');
         });
     }
+    return () => {
+      ignore = true;
+    };
   }, [id, navigate]);
 
   const handleEndSubmit = async (e: React.FormEvent) => {
