@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getAuditOverview, getAuditRecent } from '../../api/auditApi';
 import type { AuditOverview, AuditRecentResponse, AuditDocumentItem } from '../../api/auditApi';
+import { downloadDocument } from '../../api/documentApi';
 import './AuditPage.css';
 
-type AuditTab = 'missing' | 'expiring_soon' | 'retention_ending_soon';
+type AuditTab = 'missing' | 'expiring_soon' | 'submitted' | 'retention_ending_soon';
 
 const AuditPage: React.FC = () => {
   const [overview, setOverview] = useState<AuditOverview | null>(null);
@@ -29,6 +30,16 @@ const AuditPage: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleDownload = async (item: AuditDocumentItem) => {
+    if (!item.document_id) return;
+    try {
+      await downloadDocument(item.document_id, item.file_name);
+    } catch (err) {
+      console.error(err);
+      alert('첨부된 파일이 없거나 다운로드에 실패했습니다.');
+    }
+  };
+
   if (loading) return <div className="audit-loading">🛡️ 공단 점검 및 감사 대비 지표 분석 중...</div>;
   if (!overview) return <div className="audit-error">점검 데이터를 불러오지 못했습니다.</div>;
 
@@ -37,6 +48,7 @@ const AuditPage: React.FC = () => {
     switch (activeTab) {
       case 'missing': return overview.missing;
       case 'expiring_soon': return overview.expiring_soon;
+      case 'submitted': return overview.submitted;
       case 'retention_ending_soon': return overview.retention_ending_soon;
       default: return [];
     }
@@ -47,7 +59,7 @@ const AuditPage: React.FC = () => {
   return (
     <div className="audit-page-container">
       <div className="page-header">
-        <h2>🛡️ 국민건강보험공단 점검 및 모니터링비 최적화</h2>
+        <h2>🛡️ 필수서류 점검 대비 모니터링</h2>
         <p>필수 서류 누락 및 유효기간 만료 상태를 영속적으로 모니터링하여 행정 처분을 예방합니다.</p>
       </div>
 
@@ -64,13 +76,16 @@ const AuditPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2구역: 3대 핵심 점검 요인 탭 바 컨트롤러 */}
+      {/* 2구역: 핵심 점검 요인 탭 바 컨트롤러 */}
       <div className="audit-tab-bar">
         <button className={`audit-tab missing ${activeTab === 'missing' ? 'active' : ''}`} onClick={() => setActiveTab('missing')}>
           ⚠️ 미제출 ({overview.missing.length})
         </button>
         <button className={`audit-tab expiring_soon ${activeTab === 'expiring_soon' ? 'active' : ''}`} onClick={() => setActiveTab('expiring_soon')}>
           ⏳ 만료예정 ({overview.expiring_soon.length})
+        </button>
+        <button className={`audit-tab submitted ${activeTab === 'submitted' ? 'active' : ''}`} onClick={() => setActiveTab('submitted')}>
+          ✅ 제출완료 ({overview.submitted.length})
         </button>
         <button className={`audit-tab retention ${activeTab === 'retention_ending_soon' ? 'active' : ''}`} onClick={() => setActiveTab('retention_ending_soon')}>
           📦 보관임박 ({overview.retention_ending_soon.length})
@@ -85,6 +100,7 @@ const AuditPage: React.FC = () => {
               <th>구분</th>
               <th>대상자명</th>
               <th>점검 필수 서류명</th>
+              <th>첨부 파일</th>
               <th>작성(제출)일</th>
               <th>만료(예정)일</th>
               <th>남은 기한 / 상태</th>
@@ -93,13 +109,13 @@ const AuditPage: React.FC = () => {
           <tbody>
             {currentList.length === 0 ? (
               <tr>
-                <td colSpan={6} className="empty-row">
+                <td colSpan={7} className="empty-row">
                   🎉 해당 항목에 걸리는 위반 사항 또는 점검 대상 서류가 없습니다.
                 </td>
               </tr>
             ) : (
               currentList.map((item, idx) => (
-                <tr key={item.document_id || `missing-${idx}`} className="audit-row">
+                <tr key={item.document_id || `${activeTab}-${idx}`} className="audit-row">
                   <td>
                     <span className={`target-badge ${item.target_type}`}>
                       {item.target_type === 'client' ? '이용자' : '지원사'}
@@ -107,18 +123,28 @@ const AuditPage: React.FC = () => {
                   </td>
                   <td className="name-cell">{item.target_name}</td>
                   <td className="doc-name-cell">{item.document_name}</td>
+                  <td>
+                    {item.document_id && item.file_name ? (
+                      <button type="button" className="file-download-link" onClick={() => handleDownload(item)}>
+                        ⬇ {item.file_name}
+                      </button>
+                    ) : (
+                      <span className="null-text">-</span>
+                    )}
+                  </td>
                   <td>{item.created_date || <span className="null-text">-</span>}</td>
                   <td>{item.expiration_date || <span className="null-text">-</span>}</td>
                   <td>
                     {activeTab === 'missing' && <span className="status-tag-red">서류미비</span>}
                     {activeTab === 'expiring_soon' && (
                       <span className="status-tag-orange">
-                        {item.days_until_expire !== null ? `${item.days_until_expire}일 남음` : '만료임박'}
+                        {item.days_until_expire !== null && item.days_until_expire !== undefined ? `${item.days_until_expire}일 남음` : '만료임박'}
                       </span>
                     )}
+                    {activeTab === 'submitted' && <span className="status-tag-green">제출완료</span>}
                     {activeTab === 'retention_ending_soon' && (
                       <span className="status-tag-gray">
-                        {item.days_until_retention_end !== null ? `보관종료 ${item.days_until_retention_end}일 전` : '보관임박'}
+                        {item.days_until_retention_end !== null && item.days_until_retention_end !== undefined ? `보관종료 ${item.days_until_retention_end}일 전` : '보관임박'}
                       </span>
                     )}
                   </td>

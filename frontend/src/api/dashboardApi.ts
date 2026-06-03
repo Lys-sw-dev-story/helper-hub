@@ -6,6 +6,7 @@ export interface DashboardCounts {
   assistant_count: number;
   active_assignment_count: number;
   not_submitted_document_count: number;
+  submitted_document_count: number;
 }
 
 export interface DocumentStatusBarItem {

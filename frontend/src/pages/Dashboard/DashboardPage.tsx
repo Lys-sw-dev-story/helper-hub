@@ -67,6 +67,10 @@ const DashboardPage: React.FC = () => {
           <h3>활성 매칭 배정</h3>
           <p className="card-number active-color">{counts.active_assignment_count}<span>건</span></p>
         </div>
+        <div className="summary-card success-card">
+          <h3>제출완료 필수서류</h3>
+          <p className="card-number success-color">{counts.submitted_document_count}<span>건</span></p>
+        </div>
         <div className="summary-card alert-card">
           <h3>미제출 필수서류</h3>
           <p className="card-number danger-color">{counts.not_submitted_document_count}<span>건</span></p>
@@ -77,10 +81,14 @@ const DashboardPage: React.FC = () => {
       <div className="chart-section">
         <h3>📑 기관 필수서류 점검 및 분포 현황</h3>
         <div className="status-bars-container">
-          {document_status_chart.map((item) => {
-            // 유연한 비율 렌더링을 위한 임시 스케일 계산 (데이터가 적어도 시각적 바 노출되도록 보정)
-            const fillWidth = item.count > 0 ? Math.max((item.count / 20) * 100, 8) : 0;
-            
+          {(() => {
+          // 차트 내 최댓값 기준 상대 스케일 (가장 큰 막대=100%, 나머지는 비례).
+          // 고정 분모(예: 20)를 쓰면 20 이상 값들이 모두 100%로 잘려 길이가 같아지는 버그를 방지.
+          const maxCount = Math.max(...document_status_chart.map((i) => i.count), 1);
+          return document_status_chart.map((item) => {
+            // count 0 은 막대 없음, 1 이상은 최소 8% 보장해 작은 값도 보이도록 보정
+            const fillWidth = item.count > 0 ? Math.max((item.count / maxCount) * 100, 8) : 0;
+
             return (
               <div key={item.status} className="status-bar-row">
                 <span className="status-label">{statusLabels[item.status] || item.status}</span>
@@ -93,7 +101,8 @@ const DashboardPage: React.FC = () => {
                 <span className="status-count">{item.count}건</span>
               </div>
             );
-          })}
+          });
+          })()}
         </div>
       </div>
     </div>

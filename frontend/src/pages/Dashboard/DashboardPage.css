@@ -64,6 +64,16 @@
   color: #10b981;
 }
 
+/* 제출완료 강조 카드 */
+.success-card {
+  background-color: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.success-color {
+  color: #059669;
+}
+
 /* 위험 경고 카드 및 스펙 */
 .alert-card {
   background-color: #fff1f2;

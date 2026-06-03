@@ -8,6 +8,7 @@ export interface AuditDocumentItem {
   target_type: DocumentTargetType;
   target_id: number;
   target_name: string;
+  file_name?: string | null;
   created_date?: string | null;
   expiration_date?: string | null;
   retention_until?: string | null;
@@ -19,6 +20,7 @@ export interface AuditDocumentItem {
 export interface AuditOverview {
   missing: AuditDocumentItem[];
   expiring_soon: AuditDocumentItem[];
+  submitted: AuditDocumentItem[];
   retention_ending_soon: AuditDocumentItem[];
 }
 

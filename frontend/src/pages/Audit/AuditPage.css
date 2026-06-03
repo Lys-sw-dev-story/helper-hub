@@ -85,6 +85,7 @@
 /* 활성화 상태별 고유 컬러 바인딩 */
 .audit-tab.missing.active { background-color: #ef4444; color: #ffffff; border-color: #ef4444; }
 .audit-tab.expiring_soon.active { background-color: #f59e0b; color: #ffffff; border-color: #f59e0b; }
+.audit-tab.submitted.active { background-color: #059669; color: #ffffff; border-color: #059669; }
 .audit-tab.expired.active { background-color: #7c3aed; color: #ffffff; border-color: #7c3aed; }
 .audit-tab.needs_revision.active { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; }
 .audit-tab.retention.active { background-color: #64748b; color: #ffffff; border-color: #64748b; }
@@ -124,22 +125,23 @@
   background-color: #f8fafc;
 }
 
-/* 타겟 구분 배지 */
+/* 타겟 구분 배지 — 이용자/지원사 색을 뚜렷이 구분 */
 .target-badge {
-  padding: 3px 6px;
+  padding: 3px 10px;
   border-radius: 4px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
+  border: 1px solid transparent;
 }
-.target-badge.client { background-color: #ecfdf5; color: #059669; }
-.target-badge.assistant { background-color: #f0fdfa; color: #0d9488; }
+.target-badge.client { background-color: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }       /* 이용자 = 파랑 */
+.target-badge.assistant { background-color: #fae8ff; color: #a21caf; border-color: #f5d0fe; }   /* 지원사 = 보라 */
 
 .name-cell { font-weight: 600; color: #1e293b; }
 .doc-name-cell { font-weight: 500; color: #0f172a; }
 .null-text { color: #cbd5e1; }
 
 /* 기한 / 우측 액션 지표 배지 스타일 */
-.status-tag-red, .status-tag-blue, .status-tag-orange, .status-tag-purple, .status-tag-gray {
+.status-tag-red, .status-tag-blue, .status-tag-orange, .status-tag-purple, .status-tag-gray, .status-tag-green {
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -151,6 +153,25 @@
 .status-tag-orange { background-color: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
 .status-tag-purple { background-color: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
 .status-tag-gray { background-color: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+.status-tag-green { background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+
+/* 첨부 파일 다운로드 링크 */
+.file-download-link {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.88rem;
+  text-decoration: underline;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.file-download-link:hover { color: #1d4ed8; }
 
 .audit-loading, .audit-error {
   text-align: center;
