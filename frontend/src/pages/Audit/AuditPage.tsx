@@ -41,15 +41,22 @@ const AuditPage: React.FC = () => {
   };
 
   if (loading) return <div className="audit-loading">🛡️ 공단 점검 및 감사 대비 지표 분석 중...</div>;
-  if (!overview) return <div className="audit-error">점검 데이터를 불러오지 못했습니다.</div>;
 
-  // 탭 클릭 시 렌더링할 타겟 배열 바인딩 함수
+  // 🔥 [방어 코드 1] 백엔드가 오버뷰 자체를 못 주거나 에러났을 때 기본 빈 껍데기 객체 매핑
+  const safeOverview = overview || {
+    missing: [],
+    expiring_soon: [],
+    submitted: [],
+    retention_ending_soon: []
+  };
+
+  // 🔥 [방어 코드 2] 각 탭 배열이 undefined나 null일 경우를 대비해 확실하게 단락 평가(|| []) 적용
   const getActiveList = (): AuditDocumentItem[] => {
     switch (activeTab) {
-      case 'missing': return overview.missing;
-      case 'expiring_soon': return overview.expiring_soon;
-      case 'submitted': return overview.submitted;
-      case 'retention_ending_soon': return overview.retention_ending_soon;
+      case 'missing': return safeOverview.missing || [];
+      case 'expiring_soon': return safeOverview.expiring_soon || [];
+      case 'submitted': return safeOverview.submitted || [];
+      case 'retention_ending_soon': return safeOverview.retention_ending_soon || [];
       default: return [];
     }
   };
@@ -66,29 +73,30 @@ const AuditPage: React.FC = () => {
       {/* 1구역: 최근 2년 Cut-off 핵심 스냅샷 통계 바 */}
       <div className="recent-summary-strip">
         <div className="strip-title">
-          📋 최근 <strong>{recent?.window_years}년</strong> 이내 데이터 동기화 현황
+          📋 최근 <strong>{recent?.window_years || 2}년</strong> 이내 데이터 동기화 현황
         </div>
         <div className="strip-grid">
-          <div className="strip-item">이용자 <span>{recent?.clients.length}명</span></div>
-          <div className="strip-item">활동지원사 <span>{recent?.assistants.length}명</span></div>
-          <div className="strip-item">체크리스트 서류 <span>{recent?.documents.length}건</span></div>
-          <div className="strip-item">이용일지 로그 <span>{recent?.service_logs.length}건</span></div>
+          {/* 배열이 없을 때 터지는 현상 방지 (.length 앞에 확실하게 ?. 추가) */}
+          <div className="strip-item">이용자 <span>{recent?.clients?.length || 0}명</span></div>
+          <div className="strip-item">활동지원사 <span>{recent?.assistants?.length || 0}명</span></div>
+          <div className="strip-item">체크리스트 서류 <span>{recent?.documents?.length || 0}건</span></div>
+          <div className="strip-item">이용일지 로그 <span>{recent?.service_logs?.length || 0}건</span></div>
         </div>
       </div>
 
-      {/* 2구역: 핵심 점검 요인 탭 바 컨트롤러 */}
+      {/* 2구역: 핵심 점검 요인 탭 바 컨트롤러 (안전하게 개수 계산) */}
       <div className="audit-tab-bar">
         <button className={`audit-tab missing ${activeTab === 'missing' ? 'active' : ''}`} onClick={() => setActiveTab('missing')}>
-          ⚠️ 미제출 ({overview.missing.length})
+          ⚠️ 미제출 ({(safeOverview.missing || []).length})
         </button>
         <button className={`audit-tab expiring_soon ${activeTab === 'expiring_soon' ? 'active' : ''}`} onClick={() => setActiveTab('expiring_soon')}>
-          ⏳ 만료예정 ({overview.expiring_soon.length})
+          ⏳ 만료예정 ({(safeOverview.expiring_soon || []).length})
         </button>
         <button className={`audit-tab submitted ${activeTab === 'submitted' ? 'active' : ''}`} onClick={() => setActiveTab('submitted')}>
-          ✅ 제출완료 ({overview.submitted.length})
+          ✅ 제출완료 ({(safeOverview.submitted || []).length})
         </button>
         <button className={`audit-tab retention ${activeTab === 'retention_ending_soon' ? 'active' : ''}`} onClick={() => setActiveTab('retention_ending_soon')}>
-          📦 보관임박 ({overview.retention_ending_soon.length})
+          📦 보관임박 ({(safeOverview.retention_ending_soon || []).length})
         </button>
       </div>
 
@@ -115,9 +123,14 @@ const AuditPage: React.FC = () => {
               </tr>
             ) : (
               currentList.map((item, idx) => (
-                <tr key={item.document_id || `${activeTab}-${idx}`} className="audit-row">
+                // 🔥 [시각적 개선] 대상자 타입(client/assistant)에 따라 행(row) 전체에 구분용 클래스 주입
+                <tr 
+                  key={item.document_id || `${activeTab}-${idx}`} 
+                  className={`audit-row row-type-${item.target_type}`}
+                >
                   <td>
-                    <span className={`target-badge ${item.target_type}`}>
+                    {/* 뱃지 색상 타원화를 위해 클래스 세분화 */}
+                    <span className={`target-badge badge-${item.target_type}`}>
                       {item.target_type === 'client' ? '이용자' : '지원사'}
                     </span>
                   </td>

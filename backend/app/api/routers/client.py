@@ -46,7 +46,14 @@ def read_clients(
 
 
 @router.post("/", response_model=ClientResponse)
-def register_client(client_in: ClientCreate, db: Session = Depends(get_db)):
+def register_client(
+    client_in: ClientCreate, 
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff) # 🔐 로그인 토큰 필수 검증 추가!
+):
+
+    client_in.organization_id = current_staff.organization_id
+    
     return client_service.create_client(db, client_in)
 
 

@@ -53,7 +53,12 @@ def read_assistants(
 def register_assistant(
     assistant_in: AssistantCreate,
     db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff), # 🔐 여기에 로그인 토큰 필수 검증 레이어 추가!
 ):
+    # 💡 프론트엔드 페이로드 의존성을 완전히 제거하고,
+    # 서버 내부에서 인증된 스태프의 기관 ID로 덮어써서 철통 방어!
+    assistant_in.organization_id = current_staff.organization_id
+    
     return assistant_service.create_assistant(db, assistant_in)
 
 

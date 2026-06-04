@@ -26,6 +26,12 @@ const ClientRegister: React.FC = () => {
     e.preventDefault();
 
     try {
+      // 🔥 [해결책] 로컬 스토리지 등에 저장된 로그인 유저 정보에서 organization_id를 동적으로 가져옴
+      // 만약 세션 저장 키 이름이 다르면 'user'나 'staff' 등으로 맞춰줘!
+      const storedUser = localStorage.getItem('user');
+      const userObj = storedUser ? JSON.parse(storedUser) : null;
+      const currentOrgId = userObj?.organization_id || 1; // 정 안되면 기본값 1
+
       const submitData: ClientData = {
         client_name: formData.client_name,
         client_birth_date: formData.client_birth_date || undefined,
@@ -33,7 +39,7 @@ const ClientRegister: React.FC = () => {
         client_address: formData.client_address || undefined,
         client_status: formData.client_status || undefined,
         client_memo: formData.client_memo || undefined,
-        organization_id: 1,
+        organization_id: currentOrgId, // 🔐 하드코딩 1 대신 현재 로그인한 기관 ID 동적 주입!
       };
 
       await registerClient(submitData);

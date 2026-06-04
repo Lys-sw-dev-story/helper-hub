@@ -26,6 +26,11 @@ const AssistantRegister: React.FC = () => {
     e.preventDefault();
 
     try {
+      // 🔥 [해결책] 로컬 스토리지 등에 저장된 로그인 유저 정보에서 organization_id를 동적으로 가져옴
+      const storedUser = localStorage.getItem('user');
+      const userObj = storedUser ? JSON.parse(storedUser) : null;
+      const currentOrgId = userObj?.organization_id || 1;
+
       const submitData: AssistantData = {
         assistant_name: formData.assistant_name,
         assistant_phone: formData.assistant_phone || undefined,
@@ -33,7 +38,7 @@ const AssistantRegister: React.FC = () => {
         work_start_date: formData.work_start_date || undefined,
         assistant_license: formData.assistant_license || undefined,
         assistant_memo: formData.assistant_memo || undefined,
-        organization_id: 1,
+        organization_id: currentOrgId, // 🔐 하드코딩 1 대신 현재 로그인한 기관 ID 동적 주입!
       };
 
       await registerAssistant(submitData);
