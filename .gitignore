@@ -21,6 +21,15 @@ frontend/npm-debug.log*
 # 업로드 파일 (개인정보 포함 가능 — 커밋 금지)
 backend/uploads/
 
-# 데모용 더미 이용내역 시드 (커밋 금지 — 로컬 데모 전용)
+# 데모용 더미 시드/일회성 스크립트 (커밋 금지 — 로컬 데모 전용)
 backend/scripts/seed_service_logs_demo.py
 backend/scripts/seed_demo_documents.py
+backend/scripts/seed_audit_aged_demo.py
+backend/scripts/seed_matching_tags_demo.py
+backend/scripts/attach_demo_files.py
+
+# 개발용 임시 파일 (커밋 금지)
+.Rhistory
+/package-lock.json
+backend/test_token.py
+frontend/.vite/
