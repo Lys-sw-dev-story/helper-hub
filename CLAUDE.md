@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 5. **로그인은 기관 직원(staff)만 가능하다.** 이용자(client)·활동지원사(assistant) 본인 로그인 경로, 공개 회원가입(`/signup`) 같은 엔드포인트를 만들지 않는다. 직원 계정은 관리자가 직접 발급하는 모델이다.
 6. **메모는 문서(파일 업로드)와 혼용하지 않는다.**
    - 메모는 `client.client_memo` / `assistant.assistant_memo` 컬럼에 저장한다 (엔티티 단일 텍스트, 덮어쓰기).
-   - 문서는 `document` 테이블에 메타데이터로, 실제 파일은 파일시스템에 저장한다.
+   - 문서는 `document` 테이블에 메타데이터(+ 파일 바이트)로 저장한다. 실제 파일은 `document.file_data`(LONGBLOB)에 둔다 (2026-06-02 결정 — 아래 §4 참조).
    - 화일 화면에서는 "서류" 탭과 "메모" 탭을 분리한다. 한쪽 데이터를 다른 쪽 모델에 섞어 저장하지 않는다.
 
 ---
@@ -38,7 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Database | **MySQL / MariaDB** |
 | ORM | SQLAlchemy + Alembic 마이그레이션 |
 | 인증 | JWT 기반 세션 (`organization_id` 클레임 포함) |
-| 파일 저장 | 로컬 파일시스템 (MVP), 메타데이터만 DB |
+| 파일 저장 | **DB 저장** (`document.file_data` LONGBLOB) + 메타데이터 (2026-06-02 결정, 기존 파일시스템에서 전환) |
 
 ### 폴더 구조 (현재 코드 기준)
 
@@ -224,7 +224,9 @@ ruff check . && ruff format .
 - **상수는 한 곳에 모은다**: 보관기간 5년, 점검 2년, 서류 상태 5종, 만료예정 임계값 30일은 `frontend/src/lib/constants.ts` 와 `backend/app/core/constants.py` 양쪽에 정의하고 동기 유지.
 - **서류 상태값은 enum**: TS 는 `as const` 유니온, Python 은 `enum.StrEnum`. 문자열 리터럴을 코드 곳곳에 흩지 않는다.
 - **2년/5년 같은 기간 필터는 서비스 레이어**에서 처리. 라우터/컴포넌트에 직접 날짜 계산 로직을 두지 않는다.
-- **파일 업로드**는 메타데이터만 DB에 저장하고 실제 파일은 파일시스템(또는 추후 오브젝트 스토리지)에 둔다. DB 에 BLOB 으로 넣지 않는다.
+- **파일 업로드**는 실제 파일 바이트를 `document.file_data`(LONGBLOB)에 저장하고, 메타데이터(`file_name`, `expiration_date` 등)는 같은 row 에 둔다. 다운로드는 `GET /api/documents/{id}/file`. 조회 성능을 위해 `file_data`는 SQLAlchemy `deferred` 로 지연 로딩하며 목록/체크리스트 응답에는 싣지 않는다.
+  - ⚠️ **결정 변경 (2026-06-02)**: 이전 컨벤션은 "파일은 파일시스템, DB엔 메타데이터만, BLOB 금지" 였으나, 사용자 요청으로 **DB(LONGBLOB) 저장으로 전환**했다 (데모 재현성·이식성). 레거시(파일시스템) 문서는 `file_path` 폴백으로 계속 다운로드된다. **노션 "구조" 문서에도 이 변경을 반영할 것.**
+  - 컬럼 추가는 Alembic 미설치 환경이라 `backend/scripts/migrate_document_file_storage.py`(idempotent ALTER)로 적용한다.
 - **메모는 document 와 섞지 않는다**. `client.client_memo` / `assistant.assistant_memo` 는 엔티티 단일 텍스트, `document` 는 파일 메타. 화일 화면에서는 "서류" 탭과 "메모" 탭을 분리한다 (절대규칙 §0.6).
 - **인증은 모든 `/api/*` 라우트에 기본 적용**. 의존성 주입(`Depends(get_current_staff)`) 으로 staff 인증을 강제하고, 예외(공개 엔드포인트)를 만들지 않는다. 라우터는 또한 `current_staff.organization_id` 로 쿼리를 필터링해 멀티테넌시를 지킨다.
 - **Pydantic 스키마와 SQLAlchemy 모델은 분리**. 모델을 그대로 응답하지 않는다.

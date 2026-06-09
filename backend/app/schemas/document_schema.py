@@ -34,6 +34,7 @@ class DocumentResponse(BaseModel):
     target_type: DocumentTargetType
     document_name: str
     file_path: Optional[str] = None
+    file_name: Optional[str] = None
     created_date: Optional[date] = None
     expiration_date: Optional[date] = None
     is_submitted: bool
@@ -59,4 +60,5 @@ class DocumentChecklistItem(BaseModel):
     document_id: Optional[int] = None
     expiration_date: Optional[date] = None
     file_path: Optional[str] = None
+    file_name: Optional[str] = None
     status: DocumentStatus

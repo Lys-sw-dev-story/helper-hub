@@ -1,5 +1,6 @@
 from datetime import date
 from typing import Optional
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from fastapi.responses import Response
@@ -89,6 +90,51 @@ def create_document(
         expiration_date=expiration_date,
         document_memo=document_memo,
         today=date.today(),
+    )
+
+
+@router.post("/save", response_model=DocumentResponse)
+def save_document(
+    requirement_id: int = Form(...),
+    target_id: int = Form(...),
+    document_id: Optional[int] = Form(None),
+    expiration_date: Optional[date] = Form(None),
+    document_memo: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    """체크리스트 행 [변경사항 저장] — 파일·만료일·메모를 한 번에 upsert."""
+    return document_service.save_document(
+        db=db,
+        organization_id=current_staff.organization_id,
+        requirement_id=requirement_id,
+        target_id=target_id,
+        document_id=document_id,
+        upload=file,
+        expiration_date=expiration_date,
+        document_memo=document_memo,
+        today=date.today(),
+    )
+
+
+@router.get("/{document_id}/file")
+def download_document_file(
+    document_id: int,
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    data, file_name, media_type = document_service.get_document_file(
+        db=db,
+        organization_id=current_staff.organization_id,
+        document_id=document_id,
+    )
+    # 한글 파일명 대응 (RFC 5987)
+    disposition = f"attachment; filename*=UTF-8''{quote(file_name)}"
+    return Response(
+        content=data,
+        media_type=media_type,
+        headers={"Content-Disposition": disposition},
     )
 
 

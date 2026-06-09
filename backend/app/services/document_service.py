@@ -1,7 +1,6 @@
-import os
-import shutil
+import mimetypes
 from datetime import date, timedelta
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Optional
 
 from fastapi import HTTPException, UploadFile, status
@@ -23,7 +22,7 @@ from app.schemas.document_schema import (
 )
 
 
-UPLOAD_ROOT = Path(__file__).resolve().parents[2] / "uploads"
+MAX_UPLOAD_BYTES = 32 * 1024 * 1024  # 32MB (LONGBLOB 한계 내 안전선)
 
 
 def compute_status(document: Document, today: date) -> DocumentStatus:
@@ -47,6 +46,7 @@ def _to_response(document: Document, today: date) -> DocumentResponse:
         target_type=DocumentTargetType(document.requirement.target_type),
         document_name=document.requirement.document_name,
         file_path=document.file_path,
+        file_name=_file_display_name(document),
         created_date=document.created_date,
         expiration_date=document.expiration_date,
         is_submitted=document.is_submitted,
@@ -89,16 +89,42 @@ def _get_document_or_404(
     return document
 
 
-def _save_upload(
-    upload: UploadFile, organization_id: int, document_id: int
-) -> str:
-    org_dir = UPLOAD_ROOT / str(organization_id)
-    org_dir.mkdir(parents=True, exist_ok=True)
-    safe_name = os.path.basename(upload.filename or "file")
-    target = org_dir / f"{document_id}_{safe_name}"
-    with target.open("wb") as f:
-        shutil.copyfileobj(upload.file, f)
-    return str(target)
+def _read_upload(upload: UploadFile) -> tuple[bytes, str]:
+    """업로드 파일을 바이트로 읽어 (데이터, 원본파일명) 으로 반환한다.
+
+    파일은 파일시스템이 아니라 document.file_data(LONGBLOB) 에 저장한다
+    (팀 결정 2026-06-02). 과도한 용량은 거부한다.
+    """
+    data = upload.file.read()
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="파일이 너무 큽니다. 32MB 이하만 업로드할 수 있습니다.",
+        )
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="빈 파일은 업로드할 수 없습니다.",
+        )
+    file_name = PurePath(upload.filename or "file").name
+    return data, file_name
+
+
+def _guess_media_type(file_name: Optional[str]) -> str:
+    if file_name:
+        guessed, _ = mimetypes.guess_type(file_name)
+        if guessed:
+            return guessed
+    return "application/octet-stream"
+
+
+def _file_display_name(document: Document) -> Optional[str]:
+    """표시용 파일명: DB 저장 파일명 우선, 없으면 레거시 경로 베이스네임."""
+    if document.file_name:
+        return document.file_name
+    if document.file_path:
+        return PurePath(document.file_path).name
+    return None
 
 
 def list_requirements(
@@ -247,15 +273,93 @@ def create_document(
         is_submitted=upload is not None,
         document_memo=document_memo,
     )
-    db.add(document)
-    db.flush()  # document_id 확보
 
     if upload is not None:
-        document.file_path = _save_upload(upload, organization_id, document.document_id)
+        data, file_name = _read_upload(upload)
+        document.file_data = data
+        document.file_name = file_name
+
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+    return _to_response(document, today)
+
+
+def save_document(
+    db: Session,
+    organization_id: int,
+    requirement_id: int,
+    target_id: int,
+    document_id: Optional[int],
+    upload: Optional[UploadFile],
+    expiration_date: Optional[date],
+    document_memo: Optional[str],
+    today: date,
+) -> DocumentResponse:
+    """체크리스트 행의 [변경사항 저장] 용 upsert.
+
+    document_id 가 있으면 그 문서를, 없으면 새 문서를 만들어 파일·만료일·메모를
+    한 번에 반영한다. 프론트에서 파일과 만료일을 모두 입력한 뒤 한 번만 호출한다.
+    """
+    requirement = _get_requirement_or_404(db, requirement_id)
+
+    # 신규 제출은 반드시 파일이 있어야 한다 (만료일만 있는 빈 문서 생성 방지)
+    if document_id is None and upload is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="제출할 파일을 선택해주세요.",
+        )
+
+    if document_id is not None:
+        document = _get_document_or_404(db, organization_id, document_id)
+    else:
+        document = Document(
+            target_id=target_id,
+            requirement_id=requirement.requirement_id,
+            organization_id=organization_id,
+            is_submitted=False,
+        )
+        db.add(document)
+
+    if upload is not None:
+        data, file_name = _read_upload(upload)
+        document.file_data = data
+        document.file_name = file_name
+        document.file_path = None  # DB 저장으로 전환 — 레거시 경로 무효화
+        document.is_submitted = True
+        if document.created_date is None:
+            document.created_date = today
+
+    document.expiration_date = expiration_date
+    if document_memo is not None:
+        document.document_memo = document_memo
 
     db.commit()
     db.refresh(document)
     return _to_response(document, today)
+
+
+def get_document_file(
+    db: Session, organization_id: int, document_id: int
+) -> tuple[bytes, str, str]:
+    """다운로드용 (바이트, 파일명, media_type). DB 저장분 우선, 없으면 레거시 파일시스템."""
+    document = _get_document_or_404(db, organization_id, document_id)
+
+    if document.file_data is not None:
+        file_name = document.file_name or f"document_{document_id}"
+        return bytes(document.file_data), file_name, _guess_media_type(file_name)
+
+    # 레거시: 파일시스템에 저장된 기존 문서
+    if document.file_path:
+        legacy = Path(document.file_path)
+        if legacy.exists():
+            file_name = document.file_name or legacy.name
+            return legacy.read_bytes(), file_name, _guess_media_type(file_name)
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="첨부된 파일이 없습니다.",
+    )
 
 
 def update_document(
@@ -284,7 +388,10 @@ def replace_document_file(
     today: date,
 ) -> DocumentResponse:
     document = _get_document_or_404(db, organization_id, document_id)
-    document.file_path = _save_upload(upload, organization_id, document.document_id)
+    data, file_name = _read_upload(upload)
+    document.file_data = data
+    document.file_name = file_name
+    document.file_path = None  # DB 저장으로 전환 — 레거시 경로 무효화
     document.is_submitted = True
     if document.created_date is None:
         document.created_date = today
@@ -354,6 +461,7 @@ def build_checklist(
                     document_id=document.document_id,
                     expiration_date=document.expiration_date,
                     file_path=document.file_path,
+                    file_name=_file_display_name(document),
                     status=compute_status(document, today),
                 )
             )
