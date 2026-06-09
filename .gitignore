@@ -27,6 +27,9 @@ backend/scripts/seed_demo_documents.py
 backend/scripts/seed_audit_aged_demo.py
 backend/scripts/seed_matching_tags_demo.py
 backend/scripts/attach_demo_files.py
+backend/scripts/backup_demo_data.py
+backend/scripts/reset_demo_for_presentation.py
+backend/demo_backup_pre_reset.json
 
 # 개발용 임시 파일 (커밋 금지)
 .Rhistory
