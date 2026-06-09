@@ -11,6 +11,7 @@ from app.schemas.assignment_schema import (
     AssignmentCreate,
     AssignmentDetail,
     AssignmentEnd,
+    MatchCandidatesResponse,
 )
 from app.services import assignment_service
 
@@ -26,6 +27,8 @@ def create_assignment(
     db: Session = Depends(get_db),
     current_staff: Staff = Depends(get_current_staff),
 ):
+    # 매칭 담당자는 로그인한 staff 로 강제(클라이언트가 보낸 staff_id 는 신뢰하지 않음)
+    payload.staff_id = current_staff.staff_id
     return assignment_service.create_assignment(
         db=db, payload=payload, organization_id=current_staff.organization_id
     )
@@ -45,6 +48,20 @@ def list_assignments(
         status_filter=status_filter.value if status_filter else None,
         client_id=client_id,
         assistant_id=assistant_id,
+    )
+
+
+@router.get("/match-candidates", response_model=MatchCandidatesResponse)
+def match_candidates(
+    client_id: int = Query(..., description="배정 대상 이용자 ID"),
+    db: Session = Depends(get_db),
+    current_staff: Staff = Depends(get_current_staff),
+):
+    """이용자 태그(희망 요일·지원 분야) 조건에 맞는 활동지원사 후보 목록."""
+    return assignment_service.get_match_candidates(
+        db=db,
+        client_id=client_id,
+        organization_id=current_staff.organization_id,
     )
 
 

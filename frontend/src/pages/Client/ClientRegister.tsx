@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerClient, type ClientData } from '../../api/clientApi';
+import { TagSelector } from '../../components/common/Tags';
+import { WEEKDAYS, SUPPORT_TYPES } from '../../lib/constants';
 import './Client.css';
 
 const ClientRegister: React.FC = () => {
@@ -13,6 +15,8 @@ const ClientRegister: React.FC = () => {
     client_address: '',
     client_status: '대기',
     client_memo: '',
+    client_preferred_days: '',
+    client_support_types: '',
   });
 
   const handleChange = (
@@ -20,6 +24,10 @@ const ClientRegister: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const setTag = (name: keyof ClientData) => (csv: string) => {
+    setFormData((prev) => ({ ...prev, [name]: csv }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,6 +47,8 @@ const ClientRegister: React.FC = () => {
         client_address: formData.client_address || undefined,
         client_status: formData.client_status || undefined,
         client_memo: formData.client_memo || undefined,
+        client_preferred_days: formData.client_preferred_days || undefined,
+        client_support_types: formData.client_support_types || undefined,
         organization_id: currentOrgId, // 🔐 하드코딩 1 대신 현재 로그인한 기관 ID 동적 주입!
       };
 
@@ -94,6 +104,26 @@ const ClientRegister: React.FC = () => {
             <option value="이용 중">이용 중</option>
             <option value="종료">종료</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label>희망 요일 (매칭 태그)</label>
+          <TagSelector
+            options={WEEKDAYS}
+            value={formData.client_preferred_days}
+            onChange={setTag('client_preferred_days')}
+            variant="day"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>희망 지원 분야 (매칭 태그)</label>
+          <TagSelector
+            options={SUPPORT_TYPES}
+            value={formData.client_support_types}
+            onChange={setTag('client_support_types')}
+            variant="support"
+          />
         </div>
 
         <div className="form-group">

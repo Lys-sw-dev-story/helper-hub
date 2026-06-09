@@ -8,7 +8,8 @@ from pydantic import BaseModel
 class AssistantCreate(BaseModel):
     assistant_name: str
     assistant_phone: Optional[str] = None
-    work_days: Optional[str] = None
+    work_days: Optional[str] = None  # 매칭 태그: 근무 가능 요일 CSV
+    assistant_support_types: Optional[str] = None  # 매칭 태그: 가능 지원 분야 CSV
     work_start_date: Optional[date] = None
     assistant_license: Optional[str] = None
     assistant_memo: Optional[str] = None
@@ -29,6 +30,7 @@ class AssistantDetailResponse(BaseModel):
     assistant_name: str
     assistant_phone: Optional[str] = None
     work_days: Optional[str] = None
+    assistant_support_types: Optional[str] = None
     work_start_date: Optional[date] = None
     assistant_license: Optional[str] = None
     assistant_memo: Optional[str] = None
@@ -42,6 +44,7 @@ class AssistantUpdate(BaseModel):
     assistant_name: Optional[str] = None
     assistant_phone: Optional[str] = None
     work_days: Optional[str] = None
+    assistant_support_types: Optional[str] = None
     work_start_date: Optional[date] = None
     assistant_license: Optional[str] = None
     assistant_memo: Optional[str] = None

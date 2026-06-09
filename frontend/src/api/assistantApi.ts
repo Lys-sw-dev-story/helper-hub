@@ -3,7 +3,8 @@ import axiosInstance from './axiosInstance';
 export interface AssistantData {
   assistant_name: string;
   assistant_phone?: string;
-  work_days?: string;
+  work_days?: string; // 매칭 태그: 근무 가능 요일 CSV ("월,수,금")
+  assistant_support_types?: string; // 매칭 태그: 가능 지원 분야 CSV
   work_start_date?: string;
   assistant_license?: string;
   assistant_memo?: string;

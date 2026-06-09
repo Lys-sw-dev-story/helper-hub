@@ -39,6 +39,8 @@ def read_clients(
             "client_address": client.client_address,
             "client_status": client.client_status,
             "client_memo": client.client_memo,
+            "client_preferred_days": client.client_preferred_days,
+            "client_support_types": client.client_support_types,
             "organization_id": client.organization_id,
         }
         for client in clients

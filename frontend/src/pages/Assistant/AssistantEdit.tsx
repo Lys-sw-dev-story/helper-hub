@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAssistant, updateAssistant, type AssistantData } from '../../api/assistantApi';
 import DocumentSection from '../../components/common/DocumentSection';
 import { DocumentTargetType } from '../../api/documentApi';
+import { TagSelector } from '../../components/common/Tags';
+import { WEEKDAYS, SUPPORT_TYPES } from '../../lib/constants';
 import './Assistant.css';
 
 const AssistantEdit: React.FC = () => {
@@ -14,11 +16,12 @@ const AssistantEdit: React.FC = () => {
   
   // 🚀 [해결 포인트] state 타입을 Partial<AssistantData>로 명시하여 organization_id 누락 에러 방지!
   const [formData, setFormData] = useState<Partial<AssistantData>>({
-    assistant_name: '', 
-    assistant_phone: '', 
+    assistant_name: '',
+    assistant_phone: '',
     work_days: '',
-    work_start_date: '', 
-    assistant_license: '', 
+    assistant_support_types: '',
+    work_start_date: '',
+    assistant_license: '',
     assistant_memo: '',
   });
 
@@ -30,6 +33,7 @@ const AssistantEdit: React.FC = () => {
             assistant_name: data.assistant_name,
             assistant_phone: data.assistant_phone || '',
             work_days: data.work_days || '',
+            assistant_support_types: data.assistant_support_types || '',
             work_start_date: data.work_start_date || '',
             assistant_license: data.assistant_license || '',
             assistant_memo: data.assistant_memo || '',
@@ -47,6 +51,10 @@ const AssistantEdit: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const setTag = (name: keyof AssistantData) => (csv: string) => {
+    setFormData(prev => ({ ...prev, [name]: csv }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,8 +88,22 @@ const AssistantEdit: React.FC = () => {
           <input name="assistant_phone" value={formData.assistant_phone || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
-          <label>근무 가능 요일</label>
-          <input name="work_days" value={formData.work_days || ''} onChange={handleChange} />
+          <label>근무 가능 요일 (매칭 태그)</label>
+          <TagSelector
+            options={WEEKDAYS}
+            value={formData.work_days}
+            onChange={setTag('work_days')}
+            variant="day"
+          />
+        </div>
+        <div className="form-group">
+          <label>가능 지원 분야 (매칭 태그)</label>
+          <TagSelector
+            options={SUPPORT_TYPES}
+            value={formData.assistant_support_types}
+            onChange={setTag('assistant_support_types')}
+            variant="support"
+          />
         </div>
         <div className="form-group">
           <label>업무 시작일</label>

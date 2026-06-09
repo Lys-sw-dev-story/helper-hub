@@ -12,6 +12,9 @@ class Client(Base):
     client_address = Column(String(255))
     client_status = Column(String(255))
     client_memo = Column(Text)
+    # 매칭 태그 (CSV 저장: 예 "월,수,금" / "신체활동 지원,사회활동 지원")
+    client_preferred_days = Column(String(50))   # 희망 요일
+    client_support_types = Column(String(100))   # 희망 지원 분야
     organization_id = Column(BigInteger, ForeignKey("organization.organization_id"))
 
     # Relationships

@@ -7,6 +7,8 @@ export interface ClientData {
   client_address?: string;
   client_status?: string;
   client_memo?: string;
+  client_preferred_days?: string; // 매칭 태그: 희망 요일 CSV ("월,수,금")
+  client_support_types?: string; // 매칭 태그: 희망 지원 분야 CSV
   organization_id: number;
 }
 

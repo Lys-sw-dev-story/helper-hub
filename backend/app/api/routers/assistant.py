@@ -40,6 +40,7 @@ def read_assistants(
             "assistant_name": assistant.assistant_name,
             "assistant_phone": assistant.assistant_phone,
             "work_days": assistant.work_days,
+            "assistant_support_types": assistant.assistant_support_types,
             "work_start_date": assistant.work_start_date,
             "assistant_license": assistant.assistant_license,
             "assistant_memo": assistant.assistant_memo,

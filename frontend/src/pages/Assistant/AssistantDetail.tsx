@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getAssistant, deleteAssistant, getAssistantTenure, getAssistantWorkHours, type AssistantData, type TenureInfo, type AssistantWorkHoursSummary } from '../../api/assistantApi';
 import DocumentSection from '../../components/common/DocumentSection';
 import { DocumentTargetType } from '../../api/documentApi';
+import { TagChips } from '../../components/common/Tags';
 import './Assistant.css';
 
 const AssistantDetail: React.FC = () => {
@@ -78,8 +79,16 @@ const AssistantDetail: React.FC = () => {
           <div className="detail-value">{data.assistant_phone || '-'}</div>
         </div>
         <div className="form-group">
-          <label>근무 가능 요일</label>
-          <div className="detail-value">{data.work_days || '-'}</div>
+          <label>근무 가능 요일 (매칭 태그)</label>
+          <div className="detail-value">
+            <TagChips tags={data.work_days} variant="day" emptyText="등록된 근무 요일이 없습니다." />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>가능 지원 분야 (매칭 태그)</label>
+          <div className="detail-value">
+            <TagChips tags={data.assistant_support_types} variant="support" emptyText="등록된 지원 분야가 없습니다." />
+          </div>
         </div>
         <div className="form-group">
           <label>업무 시작일</label>

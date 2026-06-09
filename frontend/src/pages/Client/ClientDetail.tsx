@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getClient, deleteClient, type ClientData } from '../../api/clientApi';
 import DocumentSection from '../../components/common/DocumentSection';
 import { DocumentTargetType } from '../../api/documentApi';
+import { TagChips } from '../../components/common/Tags';
 import './Client.css';
 
 const ClientDetail: React.FC = () => {
@@ -83,6 +84,18 @@ const ClientDetail: React.FC = () => {
             <span className={`status-badge ${data.client_status || '대기'}`}>
               {data.client_status || '대기'}
             </span>
+          </div>
+        </div>
+        <div className="form-group">
+          <label>희망 요일 (매칭 태그)</label>
+          <div className="detail-value">
+            <TagChips tags={data.client_preferred_days} variant="day" emptyText="등록된 희망 요일이 없습니다." />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>희망 지원 분야 (매칭 태그)</label>
+          <div className="detail-value">
+            <TagChips tags={data.client_support_types} variant="support" emptyText="등록된 희망 지원 분야가 없습니다." />
           </div>
         </div>
         <div className="form-group">

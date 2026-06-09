@@ -1,0 +1,74 @@
+/* 매칭 태그 칩 공용 스타일 (TagSelector / TagChips) */
+
+.tag-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-chip-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid #d0d5dd;
+  background: #f9fafb;
+  color: #475467;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.12s ease-in-out;
+  user-select: none;
+}
+
+/* 선택 가능한(버튼) 칩 hover */
+button.tag-chip:hover {
+  border-color: #98a2b3;
+  background: #f2f4f7;
+}
+
+/* 읽기 전용 칩 */
+.tag-chip.static {
+  cursor: default;
+}
+
+/* 요일 변형 */
+.tag-chip.tag-day.selected,
+.tag-chip.tag-day.matched {
+  background: #e7f0ff;
+  border-color: #2e7dff;
+  color: #1d4ed8;
+}
+
+/* 지원 분야 변형 */
+.tag-chip.tag-support.selected,
+.tag-chip.tag-support.matched {
+  background: #e9f9ef;
+  border-color: #16a34a;
+  color: #15803d;
+}
+
+/* 읽기 전용 기본 칩(강조 아님)은 옅게 */
+.tag-chip.static.tag-day:not(.matched) {
+  background: #f3f7ff;
+  border-color: #cdddff;
+  color: #3b6fd4;
+}
+.tag-chip.static.tag-support:not(.matched) {
+  background: #f1faf4;
+  border-color: #c7ecd4;
+  color: #2c8c52;
+}
+
+.tag-empty {
+  color: #98a2b3;
+  font-size: 0.9rem;
+}

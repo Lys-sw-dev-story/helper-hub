@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getClient, updateClient, type ClientData } from '../../api/clientApi';
 import DocumentSection from '../../components/common/DocumentSection';
 import { DocumentTargetType } from '../../api/documentApi';
+import { TagSelector } from '../../components/common/Tags';
+import { WEEKDAYS, SUPPORT_TYPES } from '../../lib/constants';
 import './Client.css';
 
 const ClientEdit: React.FC = () => {
@@ -11,9 +13,10 @@ const ClientEdit: React.FC = () => {
   const clientId = Number(id);
 
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState<ClientData>({
+  const [formData, setFormData] = useState<Partial<ClientData>>({
     client_name: '', client_birth_date: '', client_phone: '',
     client_address: '', client_status: '대기', client_memo: '',
+    client_preferred_days: '', client_support_types: '',
   });
 
   useEffect(() => {
@@ -27,6 +30,8 @@ const ClientEdit: React.FC = () => {
             client_address: data.client_address || '',
             client_status: data.client_status || '대기',
             client_memo: data.client_memo || '',
+            client_preferred_days: data.client_preferred_days || '',
+            client_support_types: data.client_support_types || '',
           });
           setLoading(false);
         })
@@ -41,6 +46,10 @@ const ClientEdit: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const setTag = (name: keyof ClientData) => (csv: string) => {
+    setFormData(prev => ({ ...prev, [name]: csv }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,32 +75,53 @@ const ClientEdit: React.FC = () => {
       <form onSubmit={handleSubmit} className="client-form">
         <div className="form-group">
           <label>이용자 성함 (필수)</label>
-          <input name="client_name" value={formData.client_name} onChange={handleChange} required />
+          <input name="client_name" value={formData.client_name || ''} onChange={handleChange} required />
         </div>
         <div className="form-group">
           <label>생년월일</label>
-          <input name="client_birth_date" type="date" value={formData.client_birth_date} onChange={handleChange} />
+          <input name="client_birth_date" type="date" value={formData.client_birth_date || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>연락처</label>
-          <input name="client_phone" value={formData.client_phone} onChange={handleChange} />
+          <input name="client_phone" value={formData.client_phone || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>거주지 주소</label>
-          <input name="client_address" value={formData.client_address} onChange={handleChange} />
+          <input name="client_address" value={formData.client_address || ''} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>현재 상태</label>
-          <select name="client_status" value={formData.client_status} onChange={handleChange}>
+          <select name="client_status" value={formData.client_status || '대기'} onChange={handleChange}>
             <option value="대기">대기</option>
             <option value="매칭중">매칭 중</option>
             <option value="이용중">이용 중</option>
             <option value="종료">종료</option>
           </select>
         </div>
+
+        <div className="form-group">
+          <label>희망 요일 (매칭 태그)</label>
+          <TagSelector
+            options={WEEKDAYS}
+            value={formData.client_preferred_days}
+            onChange={setTag('client_preferred_days')}
+            variant="day"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>희망 지원 분야 (매칭 태그)</label>
+          <TagSelector
+            options={SUPPORT_TYPES}
+            value={formData.client_support_types}
+            onChange={setTag('client_support_types')}
+            variant="support"
+          />
+        </div>
+
         <div className="form-group">
           <label>메모 및 특이사항</label>
-          <textarea name="client_memo" value={formData.client_memo} onChange={handleChange} rows={4} />
+          <textarea name="client_memo" value={formData.client_memo || ''} onChange={handleChange} rows={4} />
         </div>
 
         <DocumentSection targetType={DocumentTargetType.CLIENT} targetId={clientId} />
