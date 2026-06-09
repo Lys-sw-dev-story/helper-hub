@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   deleteAssistant,
   getAssistants,
@@ -46,7 +47,8 @@ const AssistantList: React.FC = () => {
       fetchAssistants();
     } catch (error) {
       console.error('활동지원사 삭제 실패:', error);
-      alert('삭제 실패! 다시 시도해 주세요.');
+      const detail = axios.isAxiosError(error) ? error.response?.data?.detail : undefined;
+      alert(typeof detail === 'string' ? detail : '삭제 실패! 다시 시도해 주세요.');
     }
   };
 

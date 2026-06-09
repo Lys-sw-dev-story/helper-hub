@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { deleteClient, getClients, type ClientDetail } from '../../api/clientApi';
 import './Client.css';
 
@@ -37,7 +38,8 @@ const ClientList: React.FC = () => {
       fetchClients();
     } catch (error) {
       console.error('이용자 삭제 실패:', error);
-      alert('삭제 실패! 다시 시도해 주세요.');
+      const detail = axios.isAxiosError(error) ? error.response?.data?.detail : undefined;
+      alert(typeof detail === 'string' ? detail : '삭제 실패! 다시 시도해 주세요.');
     }
   };
 
