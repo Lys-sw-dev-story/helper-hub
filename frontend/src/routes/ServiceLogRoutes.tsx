@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ServiceLogList from '../pages/ServiceLog/ServiceLogList';
 import ServiceLogForm from '../pages/ServiceLog/ServiceLogForm';

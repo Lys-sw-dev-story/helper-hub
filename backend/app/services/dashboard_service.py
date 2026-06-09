@@ -120,6 +120,7 @@ def build_summary(
             assistant_count=assistant_count,
             active_assignment_count=active_assignment_count,
             not_submitted_document_count=counter.get(DocumentStatus.NOT_SUBMITTED, 0),
+            submitted_document_count=counter.get(DocumentStatus.SUBMITTED, 0),
         ),
         document_status_chart=chart,
     )

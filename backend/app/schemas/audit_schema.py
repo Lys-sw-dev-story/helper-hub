@@ -14,6 +14,7 @@ class AuditDocumentItem(BaseModel):
     target_type: DocumentTargetType
     target_id: int
     target_name: str
+    file_name: Optional[str] = None
     created_date: Optional[date] = None
     expiration_date: Optional[date] = None
     retention_until: Optional[date] = None
@@ -25,6 +26,7 @@ class AuditDocumentItem(BaseModel):
 class AuditOverview(BaseModel):
     missing: list[AuditDocumentItem]
     expiring_soon: list[AuditDocumentItem]
+    submitted: list[AuditDocumentItem]
     retention_ending_soon: list[AuditDocumentItem]
 
 

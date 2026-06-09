@@ -8,6 +8,7 @@ class DashboardCounts(BaseModel):
     assistant_count: int
     active_assignment_count: int
     not_submitted_document_count: int
+    submitted_document_count: int
 
 
 class DocumentStatusBarItem(BaseModel):

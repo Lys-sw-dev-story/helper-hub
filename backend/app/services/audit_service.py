@@ -1,11 +1,12 @@
 from datetime import date, timedelta
+from pathlib import PurePath
 from typing import Optional
 
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.constants import (
     AUDIT_WINDOW_YEARS,
-    EXPIRATION_WARNING_DAYS,
+    RETENTION_WARNING_DAYS,
     RETENTION_YEARS,
     DocumentStatus,
     DocumentTargetType,
@@ -67,6 +68,15 @@ def _target_name_maps(db: Session, organization_id: int) -> dict[str, dict[int, 
     }
 
 
+def _doc_file_name(doc: Document) -> Optional[str]:
+    """DB 저장 파일명 우선, 없으면 레거시 경로의 베이스네임."""
+    if doc.file_name:
+        return doc.file_name
+    if doc.file_path:
+        return PurePath(doc.file_path).name
+    return None
+
+
 def _doc_to_item(
     doc: Document, target_name: str, today: date
 ) -> AuditDocumentItem:
@@ -79,6 +89,7 @@ def _doc_to_item(
         target_type=DocumentTargetType(doc.requirement.target_type),
         target_id=doc.target_id,
         target_name=target_name,
+        file_name=_doc_file_name(doc),
         created_date=doc.created_date,
         expiration_date=doc.expiration_date,
         retention_until=retention_until,
@@ -172,9 +183,10 @@ def build_overview(
     docs = _load_org_documents(db, organization_id)
 
     expiring_soon: list[AuditDocumentItem] = []
+    submitted: list[AuditDocumentItem] = []
     retention_ending_soon: list[AuditDocumentItem] = []
 
-    retention_warn_until = today + timedelta(days=EXPIRATION_WARNING_DAYS)
+    retention_warn_until = today + timedelta(days=RETENTION_WARNING_DAYS)
 
     missing = _missing_items(db, organization_id, today)
 
@@ -190,6 +202,8 @@ def build_overview(
             expiring_soon.append(item)
         elif item.status == DocumentStatus.NOT_SUBMITTED:
             missing.append(item)
+        elif item.status == DocumentStatus.SUBMITTED:
+            submitted.append(item)
 
         retention_until = item.retention_until
         if (
@@ -203,6 +217,7 @@ def build_overview(
         expiring_soon=sorted(
             expiring_soon, key=lambda i: (i.expiration_date or date.max)
         ),
+        submitted=sorted(submitted, key=lambda i: i.target_name),
         retention_ending_soon=sorted(
             retention_ending_soon, key=lambda i: (i.retention_until or date.max)
         ),

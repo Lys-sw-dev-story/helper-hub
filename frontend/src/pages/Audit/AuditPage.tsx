@@ -62,6 +62,9 @@ const AuditPage: React.FC = () => {
   };
 
   const currentList = getActiveList();
+  // 보관임박 탭은 만료일이 아니라 보관 종료일(작성일+5년)이 핵심 날짜다.
+  const isRetentionTab = activeTab === 'retention_ending_soon';
+  const dateColLabel = isRetentionTab ? '보관 종료일' : '만료(예정)일';
 
   return (
     <div className="audit-page-container">
@@ -110,7 +113,7 @@ const AuditPage: React.FC = () => {
               <th>점검 필수 서류명</th>
               <th>첨부 파일</th>
               <th>작성(제출)일</th>
-              <th>만료(예정)일</th>
+              <th>{dateColLabel}</th>
               <th>남은 기한 / 상태</th>
             </tr>
           </thead>
@@ -146,7 +149,7 @@ const AuditPage: React.FC = () => {
                     )}
                   </td>
                   <td>{item.created_date || <span className="null-text">-</span>}</td>
-                  <td>{item.expiration_date || <span className="null-text">-</span>}</td>
+                  <td>{(isRetentionTab ? item.retention_until : item.expiration_date) || <span className="null-text">-</span>}</td>
                   <td>
                     {activeTab === 'missing' && <span className="status-tag-red">서류미비</span>}
                     {activeTab === 'expiring_soon' && (
