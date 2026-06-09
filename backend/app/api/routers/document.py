@@ -100,11 +100,12 @@ def save_document(
     document_id: Optional[int] = Form(None),
     expiration_date: Optional[date] = Form(None),
     document_memo: Optional[str] = Form(None),
+    created_date: Optional[date] = Form(None),
     file: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_staff: Staff = Depends(get_current_staff),
 ):
-    """체크리스트 행 [변경사항 저장] — 파일·만료일·메모를 한 번에 upsert."""
+    """체크리스트 행 [변경사항 저장] — 파일·만료일·메모·작성일을 한 번에 upsert."""
     return document_service.save_document(
         db=db,
         organization_id=current_staff.organization_id,
@@ -114,6 +115,7 @@ def save_document(
         upload=file,
         expiration_date=expiration_date,
         document_memo=document_memo,
+        created_date=created_date,
         today=date.today(),
     )
 

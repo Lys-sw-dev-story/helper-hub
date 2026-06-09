@@ -17,6 +17,7 @@ interface DocumentSectionProps {
 interface RowEdit {
   file: File | null;
   expiration: string;
+  created: string;
 }
 
 // 상태별 배지 색 (인라인 — 전역 CSS 의존 없이 일관 표시)
@@ -69,11 +70,11 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({ targetType, targetId,
   }, [targetType, targetId]);
 
   const getEdit = (item: DocumentChecklistItem): RowEdit =>
-    edits[item.requirement_id] ?? { file: null, expiration: item.expiration_date || '' };
+    edits[item.requirement_id] ?? { file: null, expiration: item.expiration_date || '', created: '' };
 
   const patchEdit = (item: DocumentChecklistItem, patch: Partial<RowEdit>) => {
     setEdits((prev) => {
-      const current = prev[item.requirement_id] ?? { file: null, expiration: item.expiration_date || '' };
+      const current = prev[item.requirement_id] ?? { file: null, expiration: item.expiration_date || '', created: '' };
       return { ...prev, [item.requirement_id]: { ...current, ...patch } };
     });
   };
@@ -82,6 +83,7 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({ targetType, targetId,
     const e = edits[item.requirement_id];
     if (!e) return false;
     if (e.file) return true;
+    if (e.created) return true;
     return (e.expiration || '') !== (item.expiration_date || '');
   };
 
@@ -104,6 +106,7 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({ targetType, targetId,
         target_id: targetId,
         document_id: item.document_id ?? undefined,
         expiration_date: e.expiration || undefined,
+        created_date: e.created || undefined,
         file: e.file ?? undefined,
       });
       await fetchChecklist();
@@ -189,27 +192,39 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({ targetType, targetId,
                 </td>
                 {!readOnly && (
                   <td style={cell}>
-                    <input
-                      type="file"
-                      onChange={(ev) => patchEdit(item, { file: ev.target.files?.[0] ?? null })}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleSave(item)}
-                      disabled={disabled}
-                      style={{
-                        marginLeft: 8,
-                        padding: '6px 12px',
-                        borderRadius: 6,
-                        border: 'none',
-                        fontWeight: 600,
-                        cursor: disabled ? 'not-allowed' : 'pointer',
-                        background: disabled ? '#e2e8f0' : '#2563eb',
-                        color: disabled ? '#94a3b8' : '#fff',
-                      }}
-                    >
-                      {busy ? '저장 중...' : '변경사항 저장'}
-                    </button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-start' }}>
+                      <label style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                        작성일{' '}
+                        <input
+                          type="date"
+                          value={e.created}
+                          onChange={(ev) => patchEdit(item, { created: ev.target.value })}
+                        />
+                      </label>
+                      <div>
+                        <input
+                          type="file"
+                          onChange={(ev) => patchEdit(item, { file: ev.target.files?.[0] ?? null })}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleSave(item)}
+                          disabled={disabled}
+                          style={{
+                            marginLeft: 8,
+                            padding: '6px 12px',
+                            borderRadius: 6,
+                            border: 'none',
+                            fontWeight: 600,
+                            cursor: disabled ? 'not-allowed' : 'pointer',
+                            background: disabled ? '#e2e8f0' : '#2563eb',
+                            color: disabled ? '#94a3b8' : '#fff',
+                          }}
+                        >
+                          {busy ? '저장 중...' : '변경사항 저장'}
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 )}
               </tr>
@@ -220,6 +235,7 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({ targetType, targetId,
       {!readOnly && (
         <p style={{ marginTop: '0.8rem', fontSize: '0.82rem', color: '#64748b' }}>
           ※ 파일을 선택하고(유효기간 서류는 만료일도 입력한 뒤) <b>변경사항 저장</b>을 눌러야 반영됩니다.
+          {' '}작성일은 비워두면 오늘로 저장됩니다 — 과거 날짜(예: 약 5년 전)로 지정하면 점검대비 <b>보관임박</b>에 노출됩니다.
         </p>
       )}
     </div>

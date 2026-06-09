@@ -136,6 +136,7 @@ export interface SaveDocumentParams {
   document_id?: number | null;
   expiration_date?: string | null;
   document_memo?: string | null;
+  created_date?: string | null;
   file?: File | null;
 }
 
@@ -147,6 +148,7 @@ export const saveDocument = async (params: SaveDocumentParams): Promise<Document
   if (params.document_id != null) formData.append('document_id', params.document_id.toString());
   if (params.expiration_date) formData.append('expiration_date', params.expiration_date);
   if (params.document_memo) formData.append('document_memo', params.document_memo);
+  if (params.created_date) formData.append('created_date', params.created_date);
   if (params.file) formData.append('file', params.file);
 
   const response = await axiosInstance.post('/api/documents/save', formData, {

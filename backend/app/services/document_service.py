@@ -295,6 +295,7 @@ def save_document(
     expiration_date: Optional[date],
     document_memo: Optional[str],
     today: date,
+    created_date: Optional[date] = None,
 ) -> DocumentResponse:
     """체크리스트 행의 [변경사항 저장] 용 upsert.
 
@@ -329,6 +330,10 @@ def save_document(
         document.is_submitted = True
         if document.created_date is None:
             document.created_date = today
+
+    # 작성일을 명시적으로 지정하면 우선 적용 (데모: 보관임박 재현용 과거 작성일)
+    if created_date is not None:
+        document.created_date = created_date
 
     document.expiration_date = expiration_date
     if document_memo is not None:
