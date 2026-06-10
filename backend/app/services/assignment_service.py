@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 
 from fastapi import HTTPException, status
@@ -148,6 +149,12 @@ def end_assignment(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="종료일은 시작일보다 이전일 수 없습니다.",
+        )
+
+    if payload.end_date > date.today():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="종료일은 미래일 수 없습니다.",
         )
 
     assignment.assignment_status = AssignmentStatus.ENDED.value
